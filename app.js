@@ -109,6 +109,11 @@ waves.classList.remove("active");
 
 function startCall(){
 
+navigator.mediaDevices.getUserMedia({audio:true})
+.then(stream=>{
+
+stream.getTracks().forEach(track=>track.stop());
+
 currentStep = "language";
 
 selectedLanguage = "";
@@ -117,8 +122,7 @@ selectedCrop = "";
 
 solutionBox.innerText = "";
 
-screenText.innerText =
-"Calling...";
+screenText.innerText = "Calling...";
 
 clearInterval(timerInterval);
 
@@ -129,14 +133,14 @@ document.getElementById("timer")
 
 startWave();
 
-/* ===== PLAY RING ===== */
+/* RINGTONE */
 
 currentAudio =
 new Audio("audio/ringtone.m4a");
 
 currentAudio.play();
 
-/* ===== AFTER 3 SEC ===== */
+/* STOP AFTER 3 SEC */
 
 setTimeout(()=>{
 
@@ -144,7 +148,7 @@ currentAudio.pause();
 
 currentAudio.currentTime = 0;
 
-/* ===== START TIMER ===== */
+/* START TIMER */
 
 timerInterval = setInterval(()=>{
 
@@ -165,15 +169,24 @@ mins + ":" + secs;
 },1000);
 
 screenText.innerText =
-
 "1 - Telugu\n2 - English";
 
 playAudio("welcome.m4a");
 
 },3000);
 
-}
+})
+.catch(err=>{
 
+alert(
+"Please allow microphone permission"
+);
+
+console.log(err);
+
+});
+
+}
 /* ===== BUTTON PRESS ===== */
 
 function pressKey(num){
