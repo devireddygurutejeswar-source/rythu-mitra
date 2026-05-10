@@ -288,9 +288,18 @@ function startListening(){
 
 startWave();
 
+screenText.innerText =
+"🎤 Listening...\n\nSay Crop Name Clearly";
+
 setTimeout(()=>{
 
 try{
+
+recognition.lang = "en-IN";
+
+recognition.continuous = false;
+
+recognition.interimResults = false;
 
 recognition.start();
 
@@ -300,7 +309,7 @@ console.log(e);
 
 }
 
-},1200);
+},1500);
 
 }
 
@@ -457,19 +466,19 @@ setTimeout(()=>{
 
 playAudio("spots.m4a");
 
-},2500);
+},4000);
 
 setTimeout(()=>{
 
 playAudio("curl.m4a");
 
-},5000);
+},8000);
 
 setTimeout(()=>{
 
 playAudio("pest.m4a");
 
-},7500);
+},12000);
 
 }
 
@@ -508,6 +517,13 @@ playAudio("spinosad.m4a");
 
 setTimeout(()=>{
 
+playAudio("sms.m4a");
+
+screenText.innerText =
+"📩 SMS Sent To Mobile";
+
+setTimeout(()=>{
+
 screenText.innerText =
 "9 Record Complaint\n5 End Call";
 
@@ -515,9 +531,9 @@ playAudio("press9.m4a");
 
 currentStep = "complaint";
 
-},4000);
+},3000);
 
-}
+},5000);
 
 /* ===== RECORDING ===== */
 
