@@ -875,12 +875,31 @@ clearInterval(timerInterval);
 
 function endCall(){
 
-  screenText.innerHTML =
-  "📞 Call Ended";
+/* STOP AUDIO */
 
-  stopWave();
+if(currentAudio){
 
-  clearInterval(timerInterval);
+currentAudio.pause();
+
+}
+
+/* SHOW CALL ENDED */
+
+screenText.innerHTML =
+
+"📞 Call Ended";
+
+/* STOP WAVES */
+
+stopWave();
+
+/* STOP TIMER ONLY HERE */
+
+clearInterval(timerInterval);
+
+/* PREVENT MORE INPUT */
+
+currentStep = "ended";
 
 }
 
