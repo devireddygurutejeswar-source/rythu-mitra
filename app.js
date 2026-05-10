@@ -394,11 +394,11 @@ selectedLanguage==="english"
 
 "🎤 <b>Listening...</b><br><br>" +
 
-"1️⃣ Paddy<br><br>" +
+"1️⃣ Cotton<br><br>" +
 
-"2️⃣ Cotton<br><br>" +
+"2️⃣ Chilli<br><br>" +
 
-"3️⃣ Chilli<br><br>" +
+"3️⃣ Paddy<br><br>" +
 
 "4️⃣ Maize"
 
@@ -406,15 +406,26 @@ selectedLanguage==="english"
 
 "🎤 <b>వింటున్నాను...</b><br><br>" +
 
-"1️⃣ వరి<br><br>" +
+"1️⃣ పత్తి<br><br>" +
 
-"2️⃣ పత్తి<br><br>" +
+"2️⃣ మిర్చి<br><br>" +
 
-"3️⃣ మిర్చి<br><br>" +
+"3️⃣ వరి<br><br>" +
 
 "4️⃣ మొక్కజొన్న";
 
-/* INSTANT MIC START */
+/* RESET */
+
+try{
+
+recognition.stop();
+
+}
+catch(e){}
+
+/* START */
+
+setTimeout(()=>{
 
 try{
 
@@ -427,8 +438,9 @@ console.log(e);
 
 }
 
-}
+},200);
 
+}
 /* ===== RESULT ===== */
 
 recognition.onresult =
@@ -547,6 +559,72 @@ setTimeout(()=>{
 startListening();
 
 },5000);
+
+}
+
+};
+/* ===== NO SPEECH DETECTED ===== */
+
+recognition.onend = ()=>{
+
+if(currentStep==="crop"){
+
+screenText.innerHTML =
+
+selectedLanguage==="english"
+
+?
+
+"❌ <b>Crop Not Recognized</b><br><br>" +
+
+"🎤 Say Again"
+
+:
+
+"❌ <b>పంట గుర్తించలేదు</b><br><br>" +
+
+"🎤 మళ్లీ చెప్పండి";
+
+/* RETRY AUDIO */
+
+playAudio(
+selectedLanguage==="english"
+? "retry_en.m4a"
+: "retry.m4a",
+()=>{
+
+startListening();
+
+}
+);
+
+}
+
+};
+
+/* ===== SPEECH ERROR ===== */
+
+recognition.onerror = ()=>{
+
+if(currentStep==="crop"){
+
+screenText.innerHTML =
+
+selectedLanguage==="english"
+
+?
+
+"❌ <b>Try Again</b>"
+
+:
+
+"❌ <b>మళ్లీ ప్రయత్నించండి</b>";
+
+setTimeout(()=>{
+
+startListening();
+
+},1500);
 
 }
 
