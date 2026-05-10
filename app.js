@@ -48,7 +48,10 @@ function playAudio(file, callback){
   if(currentAudio){
 
     currentAudio.pause();
+
     currentAudio.currentTime = 0;
+
+    currentAudio.onended = null;
 
   }
 
@@ -56,17 +59,25 @@ function playAudio(file, callback){
 
   currentAudio.preload = "auto";
 
+  /* REMOVE END DISTURBANCE */
+
+  currentAudio.volume = 1;
+
   currentAudio.play().catch(err=>{
     console.log(err);
   });
 
   currentAudio.onended = ()=>{
 
-    if(callback){
+    setTimeout(()=>{
 
-      callback();
+      if(callback){
 
-    }
+        callback();
+
+      }
+
+    },150);
 
   };
 
@@ -144,7 +155,7 @@ function startCall(){
 
 }
 
-/* ===== BUTTON PRESS ===== */
+/* ===== BUTTON ===== */
 
 function pressKey(num){
 
@@ -324,8 +335,6 @@ function startListening(){
 
   },300);
 
-  /* ===== LONGER FOR TELUGU ===== */
-
   voiceTimeout = setTimeout(()=>{
 
     if(currentStep==="crop"){
@@ -397,8 +406,6 @@ recognition.onresult = (event)=>{
   .transcript
   .toLowerCase()
   .trim();
-
-  console.log(text);
 
   currentStep = "processing";
 
@@ -498,11 +505,7 @@ recognition.onresult = (event)=>{
 
 /* ===== ERROR ===== */
 
-recognition.onerror = (e)=>{
-
-  console.log(e);
-
-};
+recognition.onerror = ()=>{};
 
 /* ===== END ===== */
 
@@ -558,25 +561,11 @@ function cropDetected(audio){
 
   "4 - Pest Attack";
 
-  /* ===== ENABLE KEYPAD ===== */
-
   currentStep = "symptom";
 
   /* ===== PLAY CROP AUDIO ===== */
 
-  playAudio(audio,()=>{
-
-    /* ===== PLAY SYMPTOM AUDIO ===== */
-
-    playAudio(
-
-    selectedLanguage==="telugu"
-    ? "spots.m4a"
-    : "spots_en.m4a"
-
-    );
-
-  });
+  playAudio(audio);
 
 }
 
