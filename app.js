@@ -223,7 +223,7 @@ startListening();
 
 else if(currentStep === "symptoms"){
 
-/* STOP ALL SYMPTOM AUDIO */
+/* STOP ALL */
 
 symptomTimeouts.forEach(
 t=>clearTimeout(t)
@@ -325,7 +325,7 @@ stopComplaintRecording();
 
 }
 
-/* ===== START LISTENING ===== */
+/* ===== START LISTEN ===== */
 
 function startListening(){
 
@@ -367,7 +367,7 @@ event.results[0][0]
 
 console.log(text);
 
-/* ===== PADDY ===== */
+/* PADDY */
 
 if(
 text.includes("paddy") ||
@@ -381,7 +381,7 @@ cropDetected();
 
 }
 
-/* ===== COTTON ===== */
+/* COTTON */
 
 else if(
 text.includes("cotton") ||
@@ -394,7 +394,7 @@ cropDetected();
 
 }
 
-/* ===== CHILLI ===== */
+/* CHILLI */
 
 else if(
 text.includes("chilli") ||
@@ -407,7 +407,7 @@ cropDetected();
 
 }
 
-/* ===== MAIZE ===== */
+/* MAIZE */
 
 else if(
 text.includes("maize") ||
@@ -420,7 +420,7 @@ cropDetected();
 
 }
 
-/* ===== RETRY ===== */
+/* RETRY */
 
 else{
 
@@ -454,7 +454,7 @@ selectedCrop +
 
 let cropAudio = "";
 
-/* ===== CROP AUDIO ===== */
+/* CROP AUDIO */
 
 if(selectedCrop==="Paddy"){
 
@@ -519,7 +519,7 @@ t=>clearTimeout(t)
 
 symptomTimeouts = [];
 
-/* AUDIO FILES */
+/* FILES */
 
 let yellow =
 selectedLanguage==="english"
@@ -605,66 +605,53 @@ symptomTimeouts = [];
 
 stopCurrentAudio();
 
+/* SCREEN */
+
 solutionBox.innerText =
 "🌱 Fertilizer : " + name;
 
 /* PLAY FERTILIZER */
 
-currentAudio =
-new Audio("audio/" + audio);
+playAudio(audio,()=>{
 
-currentAudio.play();
-
-/* AFTER FERTILIZER */
-
-currentAudio.onended = ()=>{
+/* SMS */
 
 screenText.innerText =
 "📩 SMS Sent To Mobile";
 
-/* SMS */
+playAudio(
 
-let smsAudio =
-new Audio(
-"audio/" +
-(
 selectedLanguage==="english"
 ? "sms_en.m4a"
-: "sms.m4a"
-)
-);
+: "sms.m4a",
 
-smsAudio.play();
+()=>{
 
-/* AFTER SMS */
-
-smsAudio.onended = ()=>{
+/* COMPLAINT MENU */
 
 screenText.innerText =
 
 "Press 9 To Record Complaint\n\nPress Any Other Key To End Call";
 
-/* PRESS9 AUDIO */
-
-let pressAudio =
-new Audio(
-"audio/" +
-(
-selectedLanguage==="english"
-? "press9_en.m4a"
-: "press9.m4a"
-)
-);
-
-pressAudio.play();
-
-/* WAIT FOR INPUT */
+/* IMPORTANT */
 
 currentStep = "complaint";
 
-};
+/* MENU AUDIO */
 
-};
+playAudio(
+
+selectedLanguage==="english"
+? "press9_en.m4a"
+: "press9.m4a"
+
+);
+
+}
+
+);
+
+});
 
 }
 
