@@ -64,7 +64,7 @@ margin-bottom:18px;
 
 .phone{
 
-width:280px;
+width:290px;
 
 background:#111827;
 
@@ -98,7 +98,7 @@ margin-bottom:12px;
 
 .screen{
 
-height:360px;
+height:380px;
 
 background:
 linear-gradient(
@@ -153,7 +153,7 @@ color:white;
 
 #screenText{
 
-font-size:14px;
+font-size:15px;
 
 line-height:1.6;
 
@@ -269,15 +269,17 @@ cursor:pointer;
 background:#22c55e;
 }
 
-/* ===== COMPLAINTS ===== */
+/* ===== BOXES ===== */
 
-#complaints{
+#complaints,
+#smsBox,
+#scoreBoard{
 
 width:90%;
 
 max-width:700px;
 
-margin-top:25px;
+margin-top:22px;
 
 background:white;
 
@@ -288,22 +290,37 @@ padding:20px;
 border-radius:20px;
 }
 
-#complaints h2{
+#complaints h2,
+#smsBox h2,
+#scoreBoard h2{
 
 margin-bottom:15px;
 
 color:#166534;
 }
 
-#complaints div{
+.message{
 
-margin-bottom:18px;
+margin-bottom:15px;
 
 padding:12px;
 
 background:#ecfccb;
 
 border-radius:12px;
+}
+
+.score{
+
+margin-bottom:12px;
+
+padding:10px;
+
+background:#dbeafe;
+
+border-radius:10px;
+
+font-weight:bold;
 }
 
 audio{
@@ -319,6 +336,8 @@ margin-top:10px;
 
 <body>
 
+<!-- ===== TITLE ===== -->
+
 <div class="logo">
 🌾 Rythu Mitra
 </div>
@@ -326,6 +345,8 @@ margin-top:10px;
 <div class="tag">
 IVR Smart Farming Assistant
 </div>
+
+<!-- ===== PHONE ===== -->
 
 <div class="phone">
 
@@ -359,7 +380,7 @@ Press Call Button
 
 </div>
 
-<!-- NAV -->
+<!-- ===== NAV ===== -->
 
 <div class="nav">
 
@@ -371,7 +392,7 @@ Press Call Button
 
 </div>
 
-<!-- KEYPAD -->
+<!-- ===== KEYPAD ===== -->
 
 <div class="keypad">
 
@@ -447,13 +468,57 @@ onclick="startCall()">
 
 </div>
 
-<!-- COMPLAINTS -->
+<!-- ===== COMPLAINTS ===== -->
 
 <div id="complaints">
 
 <h2>
 🎤 Complaint Recordings
 </h2>
+
+<div class="message">
+No Complaint Yet
+</div>
+
+</div>
+
+<!-- ===== SMS HISTORY ===== -->
+
+<div id="smsBox">
+
+<h2>
+📩 SMS History
+</h2>
+
+<div class="message">
+No SMS Sent
+</div>
+
+</div>
+
+<!-- ===== SCORE BOARD ===== -->
+
+<div id="scoreBoard">
+
+<h2>
+📊 Smart Learning Scores
+</h2>
+
+<div class="score">
+Urea : 9/10
+</div>
+
+<div class="score">
+Mancozeb : 8/10
+</div>
+
+<div class="score">
+Neem Oil : 7/10
+</div>
+
+<div class="score">
+Spinosad : 6/10
+</div>
 
 </div>
 
