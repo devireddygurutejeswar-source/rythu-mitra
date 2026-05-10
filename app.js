@@ -343,15 +343,21 @@ function startListening(){
 
 clearTimeout(voiceTimeout);
 
-startWave();
+/* STOP OLD */
 
 try{
 
-recognition.stop();
+recognition.abort();
 
 }catch(e){}
 
+startWave();
+
+/* WAIT BEFORE START */
+
 setTimeout(()=>{
+
+if(currentStep!=="crop") return;
 
 try{
 
@@ -363,9 +369,9 @@ console.log(err);
 
 }
 
-},700);
+},1200);
 
-/* ===== 5 SEC ===== */
+/* ===== NO VOICE ===== */
 
 voiceTimeout = setTimeout(()=>{
 
@@ -375,7 +381,7 @@ retryCrop();
 
 }
 
-},5000);
+},6000);
 
 }
 
@@ -387,7 +393,7 @@ clearTimeout(voiceTimeout);
 
 try{
 
-recognition.stop();
+recognition.abort();
 
 }catch(e){}
 
@@ -541,11 +547,7 @@ retryCrop();
 
 recognition.onerror = ()=>{
 
-if(currentStep==="crop"){
-
-retryCrop();
-
-}
+clearTimeout(voiceTimeout);
 
 };
 
@@ -558,6 +560,18 @@ stopWave();
 /* ===== CROP DETECT ===== */
 
 function cropDetected(audio){
+
+/* STOP MIC */
+
+try{
+
+recognition.abort();
+
+}catch(e){}
+
+stopWave();
+
+/* SHOW SCREEN */
 
 screenText.innerHTML =
 
@@ -591,23 +605,33 @@ selectedLanguage==="telugu"
 
 "4 - Pest Attack";
 
-/* ===== CROP AUDIO ===== */
+/* PREVENT LOOP */
+
+currentStep = "audio";
+
+/* PLAY CROP AUDIO */
 
 playAudio(audio,()=>{
 
-/* ===== PLAY SYMPTOMS AUDIO ===== */
+/* PLAY SYMPTOMS AUDIO */
+
+setTimeout(()=>{
 
 playAudio(
 
 selectedLanguage==="telugu"
 ? "symptoms.m4a"
-: "symptoms_en.m4a"
+: "symptoms_en.m4a",
+
+()=>{
+
+currentStep = "symptom";
+
+}
 
 );
 
-/* ===== ENABLE BUTTONS ===== */
-
-currentStep = "symptom";
+},300);
 
 });
 
@@ -624,7 +648,11 @@ solutionBox.innerText =
 
 addSMS(selectedCrop,name);
 
+/* PLAY FERTILIZER AUDIO */
+
 playAudio(audio,()=>{
+
+/* AFTER AUDIO */
 
 screenText.innerHTML =
 
@@ -639,6 +667,8 @@ screenText.innerHTML =
 "<br><br>" +
 
 "📞 Any Other Key To End Call";
+
+/* PLAY NEXT AUDIO */
 
 playAudio(
 
