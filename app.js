@@ -831,31 +831,46 @@ function startComplaint(){
 
 function submitComplaint(){
 
-  if(mediaRecorder){
+if(mediaRecorder){
 
-    mediaRecorder.stop();
-
-  }
-
-  screenText.innerHTML =
-
-  "✅ Complaint Submitted<br><br>" +
-  "📞 Call Ended";
-
-  stopWave();
-
-  playAudio(
-
-  selectedLanguage==="telugu"
-  ? "submitted.m4a"
-  : "submitted_en.m4a"
-
-  );
-
-  clearInterval(timerInterval);
+mediaRecorder.stop();
 
 }
 
+/* SHOW SUBMIT MESSAGE FIRST */
+
+screenText.innerHTML =
+
+"✅ Complaint Submitted";
+
+stopWave();
+
+/* PLAY LANGUAGE AUDIO COMPLETELY */
+
+playAudio(
+
+selectedLanguage==="telugu"
+? "submitted.m4a"
+: "submitted_en.m4a",
+
+()=>{
+
+/* AFTER AUDIO ENDS */
+
+screenText.innerHTML =
+
+"✅ Complaint Submitted<br><br>" +
+"📞 Call Ended";
+
+/* STOP TIMER AFTER AUDIO */
+
+clearInterval(timerInterval);
+
+}
+
+);
+
+}
 /* ===== END ===== */
 
 function endCall(){
