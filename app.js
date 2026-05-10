@@ -221,15 +221,15 @@ selectedLanguage="telugu";
 
 screenText.innerHTML =
 
-"🎤 <b>Say Crop Name</b><br><br>" +
+"🎤 <b>పంట పేరు చెప్పండి</b><br><br>" +
 
-"1️⃣ Paddy<br><br>" +
+"1️⃣ వరి<br><br>" +
 
-"2️⃣ Cotton<br><br>" +
+"2️⃣ పత్తి<br><br>" +
 
-"3️⃣ Chilli<br><br>" +
+"3️⃣ మిర్చి<br><br>" +
 
-"4️⃣ Maize";
+"4️⃣ మొక్కజొన్న";
 
 playAudio(
 "telugu_crop.m4a",
@@ -339,15 +339,11 @@ else if(currentStep==="complaint"){
 
 stopCurrentAudio();
 
-/* RECORD */
-
 if(key==="9"){
 
 startComplaintRecording();
 
 }
-
-/* END */
 
 else{
 
@@ -361,15 +357,11 @@ endCall();
 
 else if(currentStep==="recording"){
 
-/* SUBMIT */
-
 if(key==="5"){
 
 stopComplaintRecording();
 
 }
-
-/* RE-RECORD */
 
 else if(key==="6"){
 
@@ -396,6 +388,10 @@ startWave();
 
 screenText.innerHTML =
 
+selectedLanguage==="english"
+
+?
+
 "🎤 <b>Listening...</b><br><br>" +
 
 "1️⃣ Paddy<br><br>" +
@@ -404,7 +400,19 @@ screenText.innerHTML =
 
 "3️⃣ Chilli<br><br>" +
 
-"4️⃣ Maize";
+"4️⃣ Maize"
+
+:
+
+"🎤 <b>వింటున్నాను...</b><br><br>" +
+
+"1️⃣ వరి<br><br>" +
+
+"2️⃣ పత్తి<br><br>" +
+
+"3️⃣ మిర్చి<br><br>" +
+
+"4️⃣ మొక్కజొన్న";
 
 setTimeout(()=>{
 
@@ -436,66 +444,107 @@ event.results[0][0]
 .toLowerCase()
 .trim();
 
-/* PADDY */
+console.log(text);
 
-if(text.includes("paddy")){
+/* ===== PADDY ===== */
 
-selectedCrop="Paddy";
+if(
+text.includes("paddy") ||
+text.includes("vari") ||
+text.includes("వరి")
+){
 
-cropDetected();
-
-}
-
-/* COTTON */
-
-else if(text.includes("cotton")){
-
-selectedCrop="Cotton";
-
-cropDetected();
-
-}
-
-/* CHILLI */
-
-else if(text.includes("chilli")){
-
-selectedCrop="Chilli";
+selectedCrop =
+selectedLanguage==="telugu"
+? "వరి"
+: "Paddy";
 
 cropDetected();
 
 }
 
-/* MAIZE */
+/* ===== COTTON ===== */
 
-else if(text.includes("maize")){
+else if(
+text.includes("cotton") ||
+text.includes("pathi") ||
+text.includes("పత్తి")
+){
 
-selectedCrop="Maize";
+selectedCrop =
+selectedLanguage==="telugu"
+? "పత్తి"
+: "Cotton";
 
 cropDetected();
 
 }
 
-/* RETRY */
+/* ===== CHILLI ===== */
+
+else if(
+text.includes("chilli") ||
+text.includes("mirchi") ||
+text.includes("మిర్చి")
+){
+
+selectedCrop =
+selectedLanguage==="telugu"
+? "మిర్చి"
+: "Chilli";
+
+cropDetected();
+
+}
+
+/* ===== MAIZE ===== */
+
+else if(
+text.includes("maize") ||
+text.includes("mokka jonna") ||
+text.includes("మొక్కజొన్న")
+){
+
+selectedCrop =
+selectedLanguage==="telugu"
+? "మొక్కజొన్న"
+: "Maize";
+
+cropDetected();
+
+}
+
+/* ===== RETRY ===== */
 
 else{
 
 screenText.innerHTML =
 
+selectedLanguage==="english"
+
+?
+
 "❌ <b>Crop Not Recognized</b><br><br>" +
 
-"🎤 Say Again";
+"🎤 Say Again"
+
+:
+
+"❌ <b>పంట గుర్తించలేదు</b><br><br>" +
+
+"🎤 మళ్లీ చెప్పండి";
 
 playAudio(
 selectedLanguage==="english"
 ? "retry_en.m4a"
-: "retry.m4a",
-()=>{
+: "retry.m4a"
+);
+
+setTimeout(()=>{
 
 startListening();
 
-}
-);
+},5000);
 
 }
 
@@ -521,7 +570,10 @@ let cropAudio = "";
 
 /* AUDIO */
 
-if(selectedCrop==="Paddy"){
+if(
+selectedCrop==="Paddy" ||
+selectedCrop==="వరి"
+){
 
 cropAudio =
 selectedLanguage==="english"
@@ -530,7 +582,10 @@ selectedLanguage==="english"
 
 }
 
-else if(selectedCrop==="Cotton"){
+else if(
+selectedCrop==="Cotton" ||
+selectedCrop==="పత్తి"
+){
 
 cropAudio =
 selectedLanguage==="english"
@@ -539,7 +594,10 @@ selectedLanguage==="english"
 
 }
 
-else if(selectedCrop==="Chilli"){
+else if(
+selectedCrop==="Chilli" ||
+selectedCrop==="మిర్చి"
+){
 
 cropAudio =
 selectedLanguage==="english"
@@ -548,7 +606,10 @@ selectedLanguage==="english"
 
 }
 
-else if(selectedCrop==="Maize"){
+else if(
+selectedCrop==="Maize" ||
+selectedCrop==="మొక్కజొన్న"
+){
 
 cropAudio =
 selectedLanguage==="english"
@@ -573,7 +634,7 @@ currentStep="symptoms";
 
 screenText.innerHTML =
 
-"🌾 <b>" + selectedCrop + " Detected</b><br><br>" +
+"🌾 <b>" + selectedCrop + "</b><br><br>" +
 
 "1️⃣ Yellow Leaves<br><br>" +
 
@@ -643,6 +704,12 @@ symptomTimeouts=[];
 
 stopCurrentAudio();
 
+/* DATE */
+
+let today =
+new Date()
+.toLocaleString();
+
 /* SMS HISTORY */
 
 if(smsHistory){
@@ -651,7 +718,17 @@ smsHistory.innerHTML +=
 
 "<div class='message'>" +
 
-"📩 SMS Sent : <b>" + name + "</b>" +
+"📩 <b>SMS Sent</b><br><br>" +
+
+"🌾 Crop : " + selectedCrop +
+
+"<br><br>" +
+
+"🌱 Fertilizer : " + name +
+
+"<br><br>" +
+
+"📅 " + today +
 
 "</div>";
 
@@ -663,7 +740,11 @@ screenText.innerHTML =
 
 "📩 <b>SMS Sent To Mobile</b><br><br>" +
 
-"🌱 <b>Fertilizer :</b> " + name +
+"🌾 Crop : " + selectedCrop +
+
+"<br><br>" +
+
+"🌱 Fertilizer : " + name +
 
 "<br><br><hr><br>" +
 
