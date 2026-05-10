@@ -38,8 +38,6 @@ let audioChunks = [];
 
 let complaintAudioURL = "";
 
-let restarting = false;
-
 /* ===== SCORES ===== */
 
 let scores = {
@@ -346,11 +344,7 @@ setTimeout(()=>{
 
 try{
 
-if(currentStep==="crop"){
-
 recognition.start();
-
-}
 
 }catch(err){
 
@@ -360,7 +354,7 @@ console.log(err);
 
 },300);
 
-/* ===== 5 SECOND FAIL SAFE ===== */
+/* ===== 5 SECOND FAIL ===== */
 
 clearTimeout(window.voiceTimeout);
 
@@ -421,6 +415,10 @@ event.results[0][0]
 .trim();
 
 console.log(text);
+
+/* STOP RESTART LOOP */
+
+currentStep = "processing";
 
 /* ===== PADDY ===== */
 
@@ -512,6 +510,8 @@ selectedLanguage==="telugu"
 
 else{
 
+currentStep = "crop";
+
 screenText.innerText =
 
 selectedLanguage==="telugu"
@@ -542,25 +542,11 @@ startListening();
 
 };
 
-/* ===== STABLE RESTART ===== */
+/* ===== STOP LOOP ===== */
 
 recognition.onerror = ()=>{
 
 clearTimeout(window.voiceTimeout);
-
-if(currentStep==="crop" && !restarting){
-
-restarting = true;
-
-setTimeout(()=>{
-
-restarting = false;
-
-startListening();
-
-},2000);
-
-}
 
 };
 
@@ -573,8 +559,6 @@ clearTimeout(window.voiceTimeout);
 /* ===== CROP ===== */
 
 function cropDetected(audio){
-
-currentStep = "symptom";
 
 screenText.innerText =
 
@@ -590,7 +574,15 @@ selectedCrop +
 selectedCrop +
 "\n\n1 - Yellow Leaves\n2 - Brown Spots\n3 - Leaf Curl\n4 - Pest Attack\n\n9 - Complaint";
 
+/* PLAY CROP AUDIO */
+
 playAudio(audio,()=>{
+
+/* AFTER CROP AUDIO */
+
+currentStep = "symptom";
+
+/* PLAY SYMPTOMS */
 
 playSymptoms();
 
@@ -724,7 +716,7 @@ ${s.time}
 
 }
 
-/* ===== START RECORD ===== */
+/* ===== RECORD ===== */
 
 function startComplaint(){
 
