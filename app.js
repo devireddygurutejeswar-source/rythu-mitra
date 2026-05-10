@@ -414,7 +414,7 @@ selectedLanguage==="english"
 
 "4️⃣ మొక్కజొన్న";
 
-setTimeout(()=>{
+/* INSTANT MIC START */
 
 try{
 
@@ -426,8 +426,6 @@ catch(e){
 console.log(e);
 
 }
-
-},1200);
 
 }
 
@@ -452,10 +450,12 @@ if(
 text.includes("paddy") ||
 text.includes("vari") ||
 text.includes("vaari") ||
+text.includes("vori") ||
 text.includes("wari") ||
 text.includes("bari") ||
 text.includes("varii") ||
-text.includes("wari") ||
+text.includes("va ri") ||
+text.includes("warii") ||
 text.includes("వరి")
 ){
 
@@ -467,7 +467,6 @@ selectedLanguage==="telugu"
 cropDetected();
 
 }
-
 else if(
 text.includes("cotton") ||
 text.includes("pathi") ||
