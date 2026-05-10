@@ -48,9 +48,7 @@ function playAudio(file, callback){
   if(currentAudio){
 
     currentAudio.pause();
-
     currentAudio.currentTime = 0;
-
     currentAudio.onended = null;
 
   }
@@ -58,10 +56,6 @@ function playAudio(file, callback){
   currentAudio = new Audio("audio/" + file);
 
   currentAudio.preload = "auto";
-
-  /* REMOVE END DISTURBANCE */
-
-  currentAudio.volume = 1;
 
   currentAudio.play().catch(err=>{
     console.log(err);
@@ -77,7 +71,7 @@ function playAudio(file, callback){
 
       }
 
-    },150);
+    },100);
 
   };
 
@@ -105,8 +99,6 @@ function startCall(){
 
   selectedLanguage = "";
   selectedCrop = "";
-
-  solutionBox.innerText = "";
 
   clearInterval(timerInterval);
 
@@ -315,12 +307,6 @@ function startListening(){
 
   startWave();
 
-  try{
-
-    recognition.stop();
-
-  }catch(e){}
-
   setTimeout(()=>{
 
     try{
@@ -333,7 +319,7 @@ function startListening(){
 
     }
 
-  },300);
+  },200);
 
   voiceTimeout = setTimeout(()=>{
 
@@ -346,8 +332,8 @@ function startListening(){
   },
 
   selectedLanguage==="telugu"
-  ? 8000
-  : 5000
+  ? 10000
+  : 6000
 
   );
 
@@ -358,12 +344,6 @@ function startListening(){
 function retryCrop(){
 
   clearTimeout(voiceTimeout);
-
-  try{
-
-    recognition.stop();
-
-  }catch(e){}
 
   screenText.innerHTML =
 
@@ -511,7 +491,19 @@ recognition.onerror = ()=>{};
 
 recognition.onend = ()=>{
 
-  stopWave();
+  if(currentStep==="crop"){
+
+    setTimeout(()=>{
+
+      try{
+
+        recognition.start();
+
+      }catch(e){}
+
+    },1000);
+
+  }
 
 };
 
@@ -521,13 +513,9 @@ function cropDetected(audio){
 
   clearTimeout(voiceTimeout);
 
-  try{
-
-    recognition.stop();
-
-  }catch(e){}
-
   stopWave();
+
+  currentStep = "symptom";
 
   screenText.innerHTML =
 
@@ -539,11 +527,17 @@ function cropDetected(audio){
 
   "<br><br>" +
 
-  "1 - ఆకులు పసుపు<br><br>" +
+  "1 - ఆకులు పసుపు" +
 
-  "2 - గోధుమ మచ్చలు<br><br>" +
+  "<br><br>" +
 
-  "3 - ఆకులు ముడుచుకోవడం<br><br>" +
+  "2 - గోధుమ మచ్చలు" +
+
+  "<br><br>" +
+
+  "3 - ఆకులు ముడుచుకోవడం" +
+
+  "<br><br>" +
 
   "4 - పురుగు దాడి"
 
@@ -553,17 +547,19 @@ function cropDetected(audio){
 
   "<br><br>" +
 
-  "1 - Yellow Leaves<br><br>" +
+  "1 - Yellow Leaves" +
 
-  "2 - Brown Spots<br><br>" +
+  "<br><br>" +
 
-  "3 - Leaf Curl<br><br>" +
+  "2 - Brown Spots" +
+
+  "<br><br>" +
+
+  "3 - Leaf Curl" +
+
+  "<br><br>" +
 
   "4 - Pest Attack";
-
-  currentStep = "symptom";
-
-  /* ===== PLAY CROP AUDIO ===== */
 
   playAudio(audio);
 
