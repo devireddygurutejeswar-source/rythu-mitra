@@ -600,13 +600,13 @@ selectedLanguage==="english"
 
 /* ===== PLAY ===== */
 
-playAudio(audioFile,()=>{
+playAudio(audioFile);
+
+setTimeout(()=>{
 
 playSymptoms();
 
-});
-
-}
+},3500);
 
 /* ===== SYMPTOMS ===== */
 
