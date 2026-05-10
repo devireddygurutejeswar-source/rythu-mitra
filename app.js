@@ -223,7 +223,7 @@ startListening();
 
 else if(currentStep === "symptoms"){
 
-/* STOP ALL SYMPTOM AUDIOS */
+/* STOP ALL SYMPTOM AUDIO */
 
 symptomTimeouts.forEach(
 t=>clearTimeout(t)
@@ -233,7 +233,7 @@ symptomTimeouts = [];
 
 stopCurrentAudio();
 
-/* ===== BUTTON 1 ===== */
+/* BUTTON 1 */
 
 if(key==="1"){
 
@@ -246,7 +246,7 @@ selectedLanguage==="english"
 
 }
 
-/* ===== BUTTON 2 ===== */
+/* BUTTON 2 */
 
 else if(key==="2"){
 
@@ -259,7 +259,7 @@ selectedLanguage==="english"
 
 }
 
-/* ===== BUTTON 3 ===== */
+/* BUTTON 3 */
 
 else if(key==="3"){
 
@@ -272,7 +272,7 @@ selectedLanguage==="english"
 
 }
 
-/* ===== BUTTON 4 ===== */
+/* BUTTON 4 */
 
 else if(key==="4"){
 
@@ -291,11 +291,18 @@ selectedLanguage==="english"
 
 else if(currentStep === "complaint"){
 
+stopCurrentAudio();
+
+/* RECORD */
+
 if(key==="9"){
 
 startComplaintRecording();
 
 }
+
+/* ANY OTHER KEY */
+
 else{
 
 endCall();
@@ -378,8 +385,7 @@ cropDetected();
 
 else if(
 text.includes("cotton") ||
-text.includes("cotten") ||
-text.includes("పత్తి")
+text.includes("cotten")
 ){
 
 selectedCrop = "Cotton";
@@ -392,9 +398,7 @@ cropDetected();
 
 else if(
 text.includes("chilli") ||
-text.includes("chili") ||
-text.includes("mirchi") ||
-text.includes("మిర్చి")
+text.includes("chili")
 ){
 
 selectedCrop = "Chilli";
@@ -407,8 +411,7 @@ cropDetected();
 
 else if(
 text.includes("maize") ||
-text.includes("maze") ||
-text.includes("మొక్కజొన్న")
+text.includes("maze")
 ){
 
 selectedCrop = "Maize";
@@ -422,7 +425,8 @@ cropDetected();
 else{
 
 screenText.innerText =
-"❌ Crop Not Recognized\n\nSpeak Again";
+
+"❌ Crop Not Recognized\n\n🎤 Say Again\n\n1 Paddy\n2 Cotton\n3 Chilli\n4 Maize";
 
 playAudio(
 selectedLanguage==="english"
@@ -507,7 +511,7 @@ screenText.innerText =
 selectedCrop +
 " Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
 
-/* CLEAR OLD TIMEOUTS */
+/* CLEAR OLD */
 
 symptomTimeouts.forEach(
 t=>clearTimeout(t)
@@ -591,14 +595,18 @@ playAudio(pest);
 
 function showFertilizer(name,audio){
 
-currentStep = "fertilizer";
+/* STOP OLD */
+
+symptomTimeouts.forEach(
+t=>clearTimeout(t)
+);
+
+symptomTimeouts = [];
+
+stopCurrentAudio();
 
 solutionBox.innerText =
 "🌱 Fertilizer : " + name;
-
-/* STOP OLD AUDIO */
-
-stopCurrentAudio();
 
 /* PLAY FERTILIZER */
 
@@ -614,7 +622,7 @@ currentAudio.onended = ()=>{
 screenText.innerText =
 "📩 SMS Sent To Mobile";
 
-/* SMS AUDIO */
+/* SMS */
 
 let smsAudio =
 new Audio(
@@ -650,7 +658,7 @@ selectedLanguage==="english"
 
 pressAudio.play();
 
-/* IMPORTANT */
+/* WAIT FOR INPUT */
 
 currentStep = "complaint";
 
