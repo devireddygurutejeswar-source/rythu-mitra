@@ -38,6 +38,8 @@ let audioChunks = [];
 
 let complaintAudioURL = "";
 
+let restarting = false;
+
 /* ===== SCORES ===== */
 
 let scores = {
@@ -344,7 +346,11 @@ setTimeout(()=>{
 
 try{
 
+if(currentStep==="crop"){
+
 recognition.start();
+
+}
 
 }catch(err){
 
@@ -354,7 +360,7 @@ console.log(err);
 
 },300);
 
-/* ===== 5 SEC FAIL ===== */
+/* ===== 5 SECOND FAIL SAFE ===== */
 
 clearTimeout(window.voiceTimeout);
 
@@ -536,19 +542,23 @@ startListening();
 
 };
 
-/* ===== RESTART ===== */
+/* ===== STABLE RESTART ===== */
 
 recognition.onerror = ()=>{
 
 clearTimeout(window.voiceTimeout);
 
-if(currentStep==="crop"){
+if(currentStep==="crop" && !restarting){
+
+restarting = true;
 
 setTimeout(()=>{
 
+restarting = false;
+
 startListening();
 
-},1500);
+},2000);
 
 }
 
@@ -556,17 +566,7 @@ startListening();
 
 recognition.onend = ()=>{
 
-if(currentStep==="crop"){
-
 clearTimeout(window.voiceTimeout);
-
-setTimeout(()=>{
-
-startListening();
-
-},1500);
-
-}
 
 };
 
