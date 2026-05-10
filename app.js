@@ -451,6 +451,8 @@ console.log(text);
 if(
 text.includes("paddy") ||
 text.includes("vari") ||
+text.includes("wari") ||
+text.includes("bari") ||
 text.includes("వరి")
 ){
 
@@ -463,11 +465,12 @@ cropDetected();
 
 }
 
-/* ===== COTTON ===== */
-
 else if(
 text.includes("cotton") ||
 text.includes("pathi") ||
+text.includes("patti") ||
+text.includes("patthi") ||
+text.includes("pati") ||
 text.includes("పత్తి")
 ){
 
@@ -479,8 +482,6 @@ selectedLanguage==="telugu"
 cropDetected();
 
 }
-
-/* ===== CHILLI ===== */
 
 else if(
 text.includes("chilli") ||
@@ -497,11 +498,11 @@ cropDetected();
 
 }
 
-/* ===== MAIZE ===== */
-
 else if(
 text.includes("maize") ||
+text.includes("mokkajonna") ||
 text.includes("mokka jonna") ||
+text.includes("mokkajonalu") ||
 text.includes("మొక్కజొన్న")
 ){
 
@@ -513,7 +514,6 @@ selectedLanguage==="telugu"
 cropDetected();
 
 }
-
 /* ===== RETRY ===== */
 
 else{
