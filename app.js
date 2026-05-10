@@ -439,30 +439,21 @@ return;
 
 function startListening(){
 
-navigator.mediaDevices
-.getUserMedia({audio:true})
-.then(()=>{
-
 startWave();
-
-/* DELAY */
 
 setTimeout(()=>{
 
+try{
+
 recognition.start();
 
+}catch(e){
+
+console.log(e);
+
+}
+
 },1200);
-
-})
-.catch(err=>{
-
-console.log(err);
-
-alert(
-"Please allow microphone"
-);
-
-});
 
 }
 
