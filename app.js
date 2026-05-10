@@ -57,9 +57,7 @@ function playAudio(file, callback){
   currentAudio.preload = "auto";
 
   currentAudio.play().catch(err=>{
-
     console.log(err);
-
   });
 
   currentAudio.onended = ()=>{
@@ -326,7 +324,7 @@ function startListening(){
 
   },300);
 
-  /* ===== LONGER TELUGU TIME ===== */
+  /* ===== LONGER FOR TELUGU ===== */
 
   voiceTimeout = setTimeout(()=>{
 
@@ -407,11 +405,9 @@ recognition.onresult = (event)=>{
   /* ===== MIRCHI ===== */
 
   if(
-
   text.includes("mirchi") ||
   text.includes("మిర్చి") ||
   text.includes("chilli")
-
   ){
 
     selectedCrop =
@@ -420,11 +416,9 @@ recognition.onresult = (event)=>{
     : "Chilli";
 
     cropDetected(
-
     selectedLanguage==="telugu"
     ? "chilli.m4a"
     : "chilli_en.m4a"
-
     );
 
   }
@@ -432,12 +426,10 @@ recognition.onresult = (event)=>{
   /* ===== COTTON ===== */
 
   else if(
-
   text.includes("pathi") ||
   text.includes("patti") ||
   text.includes("పత్తి") ||
   text.includes("cotton")
-
   ){
 
     selectedCrop =
@@ -446,11 +438,9 @@ recognition.onresult = (event)=>{
     : "Cotton";
 
     cropDetected(
-
     selectedLanguage==="telugu"
     ? "cotton.m4a"
     : "cotton_en.m4a"
-
     );
 
   }
@@ -458,12 +448,10 @@ recognition.onresult = (event)=>{
   /* ===== PADDY ===== */
 
   else if(
-
   text.includes("vari") ||
   text.includes("vaari") ||
   text.includes("వరి") ||
   text.includes("paddy")
-
   ){
 
     selectedCrop =
@@ -472,11 +460,9 @@ recognition.onresult = (event)=>{
     : "Paddy";
 
     cropDetected(
-
     selectedLanguage==="telugu"
     ? "paddy.m4a"
     : "paddy_en.m4a"
-
     );
 
   }
@@ -484,11 +470,9 @@ recognition.onresult = (event)=>{
   /* ===== MAIZE ===== */
 
   else if(
-
   text.includes("mokkajonna") ||
   text.includes("మొక్కజొన్న") ||
   text.includes("maize")
-
   ){
 
     selectedCrop =
@@ -497,11 +481,9 @@ recognition.onresult = (event)=>{
     : "Maize";
 
     cropDetected(
-
     selectedLanguage==="telugu"
     ? "maize.m4a"
     : "maize_en.m4a"
-
     );
 
   }
@@ -526,19 +508,7 @@ recognition.onerror = (e)=>{
 
 recognition.onend = ()=>{
 
-  if(currentStep==="crop"){
-
-    setTimeout(()=>{
-
-      try{
-
-        recognition.start();
-
-      }catch(e){}
-
-    },500);
-
-  }
+  stopWave();
 
 };
 
@@ -555,8 +525,6 @@ function cropDetected(audio){
   }catch(e){}
 
   stopWave();
-
-  currentStep = "audio";
 
   screenText.innerHTML =
 
@@ -590,6 +558,10 @@ function cropDetected(audio){
 
   "4 - Pest Attack";
 
+  /* ===== ENABLE KEYPAD ===== */
+
+  currentStep = "symptom";
+
   /* ===== PLAY CROP AUDIO ===== */
 
   playAudio(audio,()=>{
@@ -600,13 +572,9 @@ function cropDetected(audio){
 
     selectedLanguage==="telugu"
     ? "spots.m4a"
-    : "spots_en.m4a",
+    : "spots_en.m4a"
 
-    ()=>{
-
-      currentStep = "symptom";
-
-    });
+    );
 
   });
 
@@ -694,9 +662,7 @@ function loadSMS(){
     <h2>📩 SMS History</h2>
 
     <div class="message">
-
     No SMS Sent
-
     </div>
     `;
 
@@ -850,11 +816,8 @@ function addComplaint(audioURL){
   });
 
   localStorage.setItem(
-
   "complaints",
-
   JSON.stringify(complaints)
-
   );
 
   loadComplaints();
@@ -876,9 +839,7 @@ function loadComplaints(){
     <h2>🎤 Complaint Recordings</h2>
 
     <div class="message">
-
     No Complaint Yet
-
     </div>
     `;
 
