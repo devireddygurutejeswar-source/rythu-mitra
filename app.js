@@ -68,26 +68,35 @@ function playAudio(file,callback){
 
 stopCurrentAudio();
 
+/* CREATE */
+
 currentAudio =
 new Audio("audio/" + file);
 
-/* REALISTIC */
-
-currentAudio.volume = 1.0;
+/* BETTER AUDIO */
 
 currentAudio.preload = "auto";
 
-currentAudio.play()
+currentAudio.volume = 1.0;
 
+currentAudio.currentTime = 0;
+
+/* PLAY */
+
+let playPromise =
+currentAudio.play();
+
+if(playPromise !== undefined){
+
+playPromise
 .then(()=>{
 
 console.log(file + " playing");
 
 })
-
 .catch((e)=>{
 
-console.log("Audio Error:",e);
+console.log(e);
 
 if(callback){
 
@@ -97,7 +106,13 @@ callback();
 
 });
 
+}
+
+/* ENDED */
+
 currentAudio.onended = ()=>{
+
+setTimeout(()=>{
 
 if(callback){
 
@@ -105,7 +120,11 @@ callback();
 
 }
 
+},100);
+
 };
+
+/* ERROR */
 
 currentAudio.onerror = ()=>{
 
@@ -215,9 +234,17 @@ if(key==="1"){
 
 selectedLanguage = "telugu";
 
-screenText.innerText =
+screenText.innerHTML =
 
-"🎤 Say Crop Name\n\n1 Paddy\n2 Cotton\n3 Chilli\n4 Maize";
+"🎤 <b>Say Crop Name</b><br><br>" +
+
+"1️⃣ Paddy<br><br>" +
+
+"2️⃣ Cotton<br><br>" +
+
+"3️⃣ Chilli<br><br>" +
+
+"4️⃣ Maize";
 
 playAudio(
 "telugu_crop.m4a",
@@ -236,9 +263,17 @@ else if(key==="2"){
 
 selectedLanguage = "english";
 
-screenText.innerText =
+screenText.innerHTML =
 
-"🎤 Say Crop Name\n\n1 Paddy\n2 Cotton\n3 Chilli\n4 Maize";
+"🎤 <b>Say Crop Name</b><br><br>" +
+
+"1️⃣ Paddy<br><br>" +
+
+"2️⃣ Cotton<br><br>" +
+
+"3️⃣ Chilli<br><br>" +
+
+"4️⃣ Maize";
 
 playAudio(
 "english_crop.m4a",
@@ -365,9 +400,17 @@ function startListening(){
 
 startWave();
 
-screenText.innerText =
+screenText.innerHTML =
 
-"🎤 Listening...\n\n1 Paddy\n2 Cotton\n3 Chilli\n4 Maize";
+"🎤 <b>Listening...</b><br><br>" +
+
+"1️⃣ Paddy<br><br>" +
+
+"2️⃣ Cotton<br><br>" +
+
+"3️⃣ Chilli<br><br>" +
+
+"4️⃣ Maize";
 
 setTimeout(()=>{
 
@@ -399,9 +442,7 @@ event.results[0][0]
 .toLowerCase()
 .trim();
 
-console.log(text);
-
-/* ===== PADDY ===== */
+/* PADDY */
 
 if(
 text.includes("paddy") ||
@@ -415,7 +456,7 @@ cropDetected();
 
 }
 
-/* ===== COTTON ===== */
+/* COTTON */
 
 else if(
 text.includes("cotton") ||
@@ -428,7 +469,7 @@ cropDetected();
 
 }
 
-/* ===== CHILLI ===== */
+/* CHILLI */
 
 else if(
 text.includes("chilli") ||
@@ -441,7 +482,7 @@ cropDetected();
 
 }
 
-/* ===== MAIZE ===== */
+/* MAIZE */
 
 else if(
 text.includes("maize") ||
@@ -454,13 +495,23 @@ cropDetected();
 
 }
 
-/* ===== RETRY ===== */
+/* RETRY */
 
 else{
 
-screenText.innerText =
+screenText.innerHTML =
 
-"❌ Crop Not Recognized\n\n🎤 Say Again\n\n1 Paddy\n2 Cotton\n3 Chilli\n4 Maize";
+"❌ <b>Crop Not Recognized</b><br><br>" +
+
+"🎤 Say Again<br><br>" +
+
+"1️⃣ Paddy<br><br>" +
+
+"2️⃣ Cotton<br><br>" +
+
+"3️⃣ Chilli<br><br>" +
+
+"4️⃣ Maize";
 
 playAudio(
 selectedLanguage==="english"
@@ -481,10 +532,17 @@ startListening();
 
 function cropDetected(){
 
-screenText.innerText =
+screenText.innerHTML =
 
-selectedCrop +
-" Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
+"🌾 <b>" + selectedCrop + " Detected</b><br><br>" +
+
+"1️⃣ Yellow Leaves<br><br>" +
+
+"2️⃣ Brown Spots<br><br>" +
+
+"3️⃣ Leaf Curl<br><br>" +
+
+"4️⃣ Pest Attack";
 
 let cropAudio = "";
 
@@ -540,10 +598,17 @@ function playSymptoms(){
 
 currentStep = "symptoms";
 
-screenText.innerText =
+screenText.innerHTML =
 
-selectedCrop +
-" Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
+"🌾 <b>" + selectedCrop + " Detected</b><br><br>" +
+
+"1️⃣ Yellow Leaves<br><br>" +
+
+"2️⃣ Brown Spots<br><br>" +
+
+"3️⃣ Leaf Curl<br><br>" +
+
+"4️⃣ Pest Attack";
 
 /* CLEAR */
 
@@ -575,43 +640,17 @@ selectedLanguage==="english"
 ? "pest_en.m4a"
 : "pest.m4a";
 
-/* START */
+/* CONTINUOUS */
 
-playAudio(yellow);
-
-/* QUEUE */
-
-symptomTimeouts.push(
-
-setTimeout(()=>{
+playAudio(yellow,()=>{
 
 if(currentStep==="symptoms"){
 
-playAudio(spots);
-
-}
-
-},4000)
-
-);
-
-symptomTimeouts.push(
-
-setTimeout(()=>{
+playAudio(spots,()=>{
 
 if(currentStep==="symptoms"){
 
-playAudio(curl);
-
-}
-
-},8000)
-
-);
-
-symptomTimeouts.push(
-
-setTimeout(()=>{
+playAudio(curl,()=>{
 
 if(currentStep==="symptoms"){
 
@@ -619,17 +658,21 @@ playAudio(pest);
 
 }
 
-},12000)
+});
 
-);
+}
+
+});
+
+}
+
+});
 
 }
 
 /* ===== FERTILIZER ===== */
 
 function showFertilizer(name,audio){
-
-/* CLEAR */
 
 symptomTimeouts.forEach(
 t=>clearTimeout(t)
@@ -659,11 +702,9 @@ solutionBox.innerText = "";
 
 currentStep = "complaint";
 
-/* PLAY FERTILIZER */
+/* PLAY */
 
 playAudio(audio,()=>{
-
-/* PLAY COMPLAINT AUDIO */
 
 playAudio(
 
@@ -676,16 +717,18 @@ selectedLanguage==="english"
 });
 
 }
+
 /* ===== RECORD COMPLAINT ===== */
 
 async function startComplaintRecording(){
 
 currentStep = "recording";
 
-/* SCREEN */
+screenText.innerHTML =
 
-screenText.innerText =
-"🎤 Recording Complaint...\n\nPress 5 To Submit";
+"🎤 <b>Recording Complaint...</b><br><br>" +
+
+"Press 5 To Submit";
 
 /* AUDIO FIRST */
 
@@ -696,8 +739,6 @@ selectedLanguage==="english"
 : "recording_instruction.m4a",
 
 async ()=>{
-
-/* START RECORD AFTER AUDIO */
 
 const stream =
 await navigator.mediaDevices
@@ -782,8 +823,8 @@ stopTimer();
 
 stopWave();
 
-screenText.innerText =
-"📞 Call Ended";
+screenText.innerHTML =
+"📞 <b>Call Ended</b>";
 
 currentStep = "idle";
 
