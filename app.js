@@ -71,9 +71,49 @@ stopCurrentAudio();
 currentAudio =
 new Audio("audio/" + file);
 
-currentAudio.play();
+/* PLAY */
+
+currentAudio.play()
+
+.then(()=>{
+
+console.log(file + " playing");
+
+})
+
+.catch((e)=>{
+
+console.log("Audio Error:",e);
+
+/* IMPORTANT */
+
+if(callback){
+
+callback();
+
+}
+
+});
+
+/* NORMAL END */
 
 currentAudio.onended = ()=>{
+
+if(callback){
+
+callback();
+
+}
+
+};
+
+/* FAIL SAFE */
+
+currentAudio.onerror = ()=>{
+
+console.log(file + " missing");
+
+/* IMPORTANT */
 
 if(callback){
 
