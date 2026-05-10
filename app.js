@@ -303,7 +303,8 @@ recognition.interimResults = false;
 
 recognition.start();
 
-}catch(e){
+}
+catch(e){
 
 console.log(e);
 
@@ -312,7 +313,6 @@ console.log(e);
 },1500);
 
 }
-
 /* ===== VOICE RESULT ===== */
 
 recognition.onresult =
