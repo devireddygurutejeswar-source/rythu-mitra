@@ -451,8 +451,11 @@ console.log(text);
 if(
 text.includes("paddy") ||
 text.includes("vari") ||
+text.includes("vaari") ||
 text.includes("wari") ||
 text.includes("bari") ||
+text.includes("varii") ||
+text.includes("wari") ||
 text.includes("వరి")
 ){
 
