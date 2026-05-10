@@ -21,16 +21,16 @@ href="style.css">
 
 <div class="phone">
 
-<!-- ===== TOP ===== -->
+<!-- ===== TOP BAR ===== -->
 
 <div class="topBar">
 
-<div id="timer">
-00:00
+<div>
+📶 BSNL Mobile
 </div>
 
-<div class="network">
-📶
+<div id="timer">
+00:00
 </div>
 
 </div>
@@ -39,19 +39,15 @@ href="style.css">
 
 <div id="screen">
 
-<div id="wave"></div>
-
 <div id="screenText">
 
 📞 Ready To Call
 
 </div>
 
+<div id="wave"></div>
+
 </div>
-
-<!-- ===== SOLUTION ===== -->
-
-<div id="solution"></div>
 
 <!-- ===== KEYPAD ===== -->
 
@@ -101,7 +97,7 @@ onclick="endCall()">
 
 <div class="sidePanel">
 
-<!-- ===== SMS ===== -->
+<!-- ===== SMS HISTORY ===== -->
 
 <div id="smsBox"
 class="card">
@@ -110,7 +106,13 @@ class="card">
 📩 SMS History
 </h2>
 
-<div id="smsHistory"></div>
+<div id="smsHistory">
+
+<div class="message">
+No SMS Sent Yet
+</div>
+
+</div>
 
 </div>
 
@@ -122,7 +124,13 @@ class="card">
 🎤 Complaint Recordings
 </h2>
 
-<div id="complaints"></div>
+<div id="complaints">
+
+<div class="message">
+No Complaint Yet
+</div>
+
+</div>
 
 </div>
 
@@ -133,4 +141,5 @@ class="card">
 <script src="app.js"></script>
 
 </body>
+
 </html>
