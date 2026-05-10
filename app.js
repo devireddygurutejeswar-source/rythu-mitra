@@ -12,6 +12,9 @@ document.getElementById("timer");
 const complaintList =
 document.getElementById("complaints");
 
+const smsBox =
+document.getElementById("smsBox");
+
 const wave =
 document.getElementById("wave");
 
@@ -23,7 +26,7 @@ let selectedLanguage = "";
 
 let selectedCrop = "";
 
-let selectedSymptom = "";
+let currentAudio = null;
 
 let seconds = 0;
 
@@ -33,7 +36,7 @@ let mediaRecorder;
 
 let audioChunks = [];
 
-let currentAudio = null;
+let symptomReady = false;
 
 /* ===== SPEECH ===== */
 
@@ -52,7 +55,7 @@ recognition.interimResults = false;
 
 /* ===== AUDIO ===== */
 
-function playAudio(file){
+function playAudio(file,callback){
 
 if(currentAudio){
 
@@ -66,6 +69,16 @@ currentAudio =
 new Audio("audio/" + file);
 
 currentAudio.play();
+
+currentAudio.onended = ()=>{
+
+if(callback){
+
+callback();
+
+}
+
+};
 
 }
 
@@ -126,8 +139,6 @@ selectedLanguage = "";
 
 selectedCrop = "";
 
-selectedSymptom = "";
-
 solutionBox.innerText = "";
 
 screenText.innerText =
@@ -137,17 +148,6 @@ timerText.innerText =
 "00:00";
 
 startWave();
-
-/* ===== ENABLE AUDIO ===== */
-
-const unlockAudio =
-new Audio("audio/ringtone.m4a");
-
-unlockAudio.play();
-
-unlockAudio.pause();
-
-unlockAudio.currentTime = 0;
 
 /* ===== RING ===== */
 
@@ -163,8 +163,6 @@ screenText.innerText =
 "1 Telugu\n2 English";
 
 playAudio("welcome.m4a");
-
-currentStep = "language";
 
 },3000);
 
@@ -185,15 +183,16 @@ selectedLanguage = "telugu";
 screenText.innerText =
 "🎤 Say Crop Name";
 
-playAudio("telugu_crop.m4a");
+playAudio(
+"telugu_crop.m4a",
+()=>{
 
 currentStep = "crop";
 
-setTimeout(()=>{
-
 startListening();
 
-},3000);
+}
+);
 
 }
 
@@ -204,15 +203,16 @@ selectedLanguage = "english";
 screenText.innerText =
 "🎤 Say Crop Name";
 
-playAudio("english_crop.m4a");
+playAudio(
+"english_crop.m4a",
+()=>{
 
 currentStep = "crop";
 
-setTimeout(()=>{
-
 startListening();
 
-},3000);
+}
+);
 
 }
 
@@ -220,37 +220,54 @@ startListening();
 
 /* ===== SYMPTOMS ===== */
 
-else if(currentStep === "symptoms"){
+else if(
+currentStep === "symptoms"
+&& symptomReady
+){
+
+symptomReady = false;
 
 if(key === "1"){
 
-selectedSymptom = "Yellow";
-
-showFertilizer("Urea");
+showFertilizer(
+"Urea",
+selectedLanguage==="english"
+? "urea_en.m4a"
+: "urea.m4a"
+);
 
 }
 
 else if(key === "2"){
 
-selectedSymptom = "Spots";
-
-showFertilizer("Mancozeb");
+showFertilizer(
+"Mancozeb",
+selectedLanguage==="english"
+? "mancozeb_en.m4a"
+: "mancozeb.m4a"
+);
 
 }
 
 else if(key === "3"){
 
-selectedSymptom = "Curl";
-
-showFertilizer("Neem Oil");
+showFertilizer(
+"Neem Oil",
+selectedLanguage==="english"
+? "neem_en.m4a"
+: "neem.m4a"
+);
 
 }
 
 else if(key === "4"){
 
-selectedSymptom = "Pest";
-
-showFertilizer("Spinosad");
+showFertilizer(
+"Spinosad",
+selectedLanguage==="english"
+? "spinosad_en.m4a"
+: "spinosad.m4a"
+);
 
 }
 
@@ -303,14 +320,9 @@ try{
 
 recognition.lang = "en-IN";
 
-recognition.continuous = false;
-
-recognition.interimResults = false;
-
 recognition.start();
 
 }
-
 catch(e){
 
 console.log(e);
@@ -400,16 +412,16 @@ else{
 screenText.innerText =
 "❌ Crop Not Recognized\n\nSpeak Again";
 
-playAudio("retry.m4a");
-
-setTimeout(()=>{
-
-screenText.innerText =
-"🎤 Say Crop Name";
+playAudio(
+selectedLanguage==="english"
+? "retry_en.m4a"
+: "retry.m4a",
+()=>{
 
 startListening();
 
-},3000);
+}
+);
 
 }
 
@@ -419,46 +431,56 @@ startListening();
 
 function cropDetected(){
 
-stopWave();
-
 screenText.innerText =
 
 selectedCrop +
 " Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
 
+let cropAudio = "";
+
 /* ===== CROP AUDIO ===== */
 
-if(selectedCrop === "Paddy"){
+if(selectedCrop==="Paddy"){
 
-playAudio("paddy.m4a");
-
-}
-
-else if(selectedCrop === "Cotton"){
-
-playAudio("cotton.m4a");
+cropAudio =
+selectedLanguage==="english"
+? "paddy_en.m4a"
+: "paddy.m4a";
 
 }
 
-else if(selectedCrop === "Chilli"){
+else if(selectedCrop==="Cotton"){
 
-playAudio("chilli.m4a");
-
-}
-
-else if(selectedCrop === "Maize"){
-
-playAudio("maize.m4a");
+cropAudio =
+selectedLanguage==="english"
+? "cotton_en.m4a"
+: "cotton.m4a";
 
 }
 
-/* ===== PLAY SYMPTOMS ===== */
+else if(selectedCrop==="Chilli"){
 
-setTimeout(()=>{
+cropAudio =
+selectedLanguage==="english"
+? "chilli_en.m4a"
+: "chilli.m4a";
+
+}
+
+else if(selectedCrop==="Maize"){
+
+cropAudio =
+selectedLanguage==="english"
+? "maize_en.m4a"
+: "maize.m4a";
+
+}
+
+playAudio(cropAudio,()=>{
 
 playSymptoms();
 
-},3000);
+});
 
 currentStep = "symptoms";
 
@@ -468,95 +490,101 @@ currentStep = "symptoms";
 
 function playSymptoms(){
 
-playAudio("yellow.m4a");
+let yellow =
+selectedLanguage==="english"
+? "yellow_en.m4a"
+: "yellow.m4a";
 
-setTimeout(()=>{
+let spots =
+selectedLanguage==="english"
+? "spots_en.m4a"
+: "spots.m4a";
 
-playAudio("spots.m4a");
+let curl =
+selectedLanguage==="english"
+? "curl_en.m4a"
+: "curl.m4a";
 
-},4000);
+let pest =
+selectedLanguage==="english"
+? "pest_en.m4a"
+: "pest.m4a";
 
-setTimeout(()=>{
+playAudio(yellow,()=>{
 
-playAudio("curl.m4a");
+playAudio(spots,()=>{
 
-},8000);
+playAudio(curl,()=>{
 
-setTimeout(()=>{
+playAudio(pest,()=>{
 
-playAudio("pest.m4a");
+symptomReady = true;
 
-},12000);
+});
+
+});
+
+});
+
+});
 
 }
 
 /* ===== FERTILIZER ===== */
 
-function showFertilizer(name){
+function showFertilizer(name,audio){
 
 solutionBox.innerText =
 "🌱 Fertilizer : " + name;
 
-/* ===== FERTILIZER AUDIO ===== */
-
-if(name === "Urea"){
-
-playAudio("urea.m4a");
-
-}
-
-else if(name === "Mancozeb"){
-
-playAudio("mancozeb.m4a");
-
-}
-
-else if(name === "Neem Oil"){
-
-playAudio("neem.m4a");
-
-}
-
-else if(name === "Spinosad"){
-
-playAudio("spinosad.m4a");
-
-}
-
-/* ===== SMS ===== */
-
-setTimeout(()=>{
+playAudio(audio,()=>{
 
 screenText.innerText =
 "📩 SMS Sent To Mobile";
 
-playAudio("sms.m4a");
+playAudio(
 
-/* ===== COMPLAINT ===== */
+selectedLanguage==="english"
+? "sms_en.m4a"
+: "sms.m4a",
 
-setTimeout(()=>{
+()=>{
 
 screenText.innerText =
 "9 Record Complaint\n5 End Call";
 
-playAudio("press9.m4a");
+playAudio(
+
+selectedLanguage==="english"
+? "press9_en.m4a"
+: "press9.m4a"
+
+);
 
 currentStep = "complaint";
 
-},3500);
+}
 
-},5000);
+);
+
+});
 
 }
 
-/* ===== RECORD COMPLAINT ===== */
+/* ===== RECORDING ===== */
 
 async function startComplaintRecording(){
 
 screenText.innerText =
 "🎤 Recording...\nPress 5 To Submit";
 
-playAudio("recording_instruction.m4a");
+playAudio(
+
+selectedLanguage==="english"
+? "recording_instruction_en.m4a"
+: "recording_instruction.m4a"
+
+);
 
 currentStep = "recording";
 
@@ -594,6 +622,8 @@ audio.src = audioURL;
 const item =
 document.createElement("div");
 
+item.className = "message";
+
 item.innerHTML =
 "<p>Complaint Recorded</p>";
 
@@ -613,13 +643,19 @@ function stopComplaintRecording(){
 
 mediaRecorder.stop();
 
-playAudio("submitted.m4a");
+playAudio(
 
-setTimeout(()=>{
+selectedLanguage==="english"
+? "submitted_en.m4a"
+: "submitted.m4a",
+
+()=>{
 
 endCall();
 
-},3000);
+}
+
+);
 
 }
 
