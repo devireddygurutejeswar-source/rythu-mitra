@@ -15,6 +15,9 @@ document.getElementById("complaints");
 const wave =
 document.getElementById("wave");
 
+const smsHistory =
+document.getElementById("smsHistory");
+
 /* ===== VARIABLES ===== */
 
 let currentStep = "idle";
@@ -68,12 +71,8 @@ function playAudio(file,callback){
 
 stopCurrentAudio();
 
-/* CREATE */
-
 currentAudio =
 new Audio("audio/" + file);
-
-/* BETTER AUDIO */
 
 currentAudio.preload = "auto";
 
@@ -81,20 +80,12 @@ currentAudio.volume = 1.0;
 
 currentAudio.currentTime = 0;
 
-/* PLAY */
-
 let playPromise =
 currentAudio.play();
 
 if(playPromise !== undefined){
 
-playPromise
-.then(()=>{
-
-console.log(file + " playing");
-
-})
-.catch((e)=>{
+playPromise.catch((e)=>{
 
 console.log(e);
 
@@ -108,8 +99,6 @@ callback();
 
 }
 
-/* ENDED */
-
 currentAudio.onended = ()=>{
 
 setTimeout(()=>{
@@ -120,15 +109,11 @@ callback();
 
 }
 
-},100);
+},50);
 
 };
 
-/* ERROR */
-
 currentAudio.onerror = ()=>{
-
-console.log(file + " missing");
 
 if(callback){
 
@@ -199,7 +184,7 @@ selectedCrop = "";
 
 solutionBox.innerText = "";
 
-screenText.innerText =
+screenText.innerHTML =
 "Calling...";
 
 timerText.innerText =
@@ -213,8 +198,8 @@ setTimeout(()=>{
 
 startTimer();
 
-screenText.innerText =
-"1 Telugu\n2 English";
+screenText.innerHTML =
+"1 Telugu<br><br>2 English";
 
 playAudio("welcome.m4a");
 
@@ -228,11 +213,11 @@ function pressKey(key){
 
 /* ===== LANGUAGE ===== */
 
-if(currentStep === "language"){
+if(currentStep==="language"){
 
 if(key==="1"){
 
-selectedLanguage = "telugu";
+selectedLanguage="telugu";
 
 screenText.innerHTML =
 
@@ -250,7 +235,7 @@ playAudio(
 "telugu_crop.m4a",
 ()=>{
 
-currentStep = "crop";
+currentStep="crop";
 
 startListening();
 
@@ -261,7 +246,7 @@ startListening();
 
 else if(key==="2"){
 
-selectedLanguage = "english";
+selectedLanguage="english";
 
 screenText.innerHTML =
 
@@ -279,7 +264,7 @@ playAudio(
 "english_crop.m4a",
 ()=>{
 
-currentStep = "crop";
+currentStep="crop";
 
 startListening();
 
@@ -292,17 +277,15 @@ startListening();
 
 /* ===== SYMPTOMS ===== */
 
-else if(currentStep === "symptoms"){
+else if(currentStep==="symptoms"){
 
 symptomTimeouts.forEach(
 t=>clearTimeout(t)
 );
 
-symptomTimeouts = [];
+symptomTimeouts=[];
 
 stopCurrentAudio();
-
-/* BUTTON 1 */
 
 if(key==="1"){
 
@@ -315,8 +298,6 @@ selectedLanguage==="english"
 
 }
 
-/* BUTTON 2 */
-
 else if(key==="2"){
 
 showFertilizer(
@@ -328,8 +309,6 @@ selectedLanguage==="english"
 
 }
 
-/* BUTTON 3 */
-
 else if(key==="3"){
 
 showFertilizer(
@@ -340,8 +319,6 @@ selectedLanguage==="english"
 );
 
 }
-
-/* BUTTON 4 */
 
 else if(key==="4"){
 
@@ -358,7 +335,7 @@ selectedLanguage==="english"
 
 /* ===== COMPLAINT ===== */
 
-else if(currentStep === "complaint"){
+else if(currentStep==="complaint"){
 
 stopCurrentAudio();
 
@@ -382,7 +359,9 @@ endCall();
 
 /* ===== RECORDING ===== */
 
-else if(currentStep === "recording"){
+else if(currentStep==="recording"){
+
+/* SUBMIT */
 
 if(key==="5"){
 
@@ -390,11 +369,26 @@ stopComplaintRecording();
 
 }
 
+/* RE-RECORD */
+
+else if(key==="6"){
+
+if(mediaRecorder &&
+mediaRecorder.state==="recording"){
+
+mediaRecorder.stop();
+
+}
+
+startComplaintRecording();
+
+}
+
 }
 
 }
 
-/* ===== START LISTEN ===== */
+/* ===== LISTEN ===== */
 
 function startListening(){
 
@@ -425,11 +419,11 @@ console.log(e);
 
 }
 
-},1500);
+},1200);
 
 }
 
-/* ===== VOICE RESULT ===== */
+/* ===== RESULT ===== */
 
 recognition.onresult =
 function(event){
@@ -444,13 +438,9 @@ event.results[0][0]
 
 /* PADDY */
 
-if(
-text.includes("paddy") ||
-text.includes("vari") ||
-text.includes("వరి")
-){
+if(text.includes("paddy")){
 
-selectedCrop = "Paddy";
+selectedCrop="Paddy";
 
 cropDetected();
 
@@ -458,12 +448,9 @@ cropDetected();
 
 /* COTTON */
 
-else if(
-text.includes("cotton") ||
-text.includes("cotten")
-){
+else if(text.includes("cotton")){
 
-selectedCrop = "Cotton";
+selectedCrop="Cotton";
 
 cropDetected();
 
@@ -471,12 +458,9 @@ cropDetected();
 
 /* CHILLI */
 
-else if(
-text.includes("chilli") ||
-text.includes("chili")
-){
+else if(text.includes("chilli")){
 
-selectedCrop = "Chilli";
+selectedCrop="Chilli";
 
 cropDetected();
 
@@ -484,12 +468,9 @@ cropDetected();
 
 /* MAIZE */
 
-else if(
-text.includes("maize") ||
-text.includes("maze")
-){
+else if(text.includes("maize")){
 
-selectedCrop = "Maize";
+selectedCrop="Maize";
 
 cropDetected();
 
@@ -503,15 +484,7 @@ screenText.innerHTML =
 
 "❌ <b>Crop Not Recognized</b><br><br>" +
 
-"🎤 Say Again<br><br>" +
-
-"1️⃣ Paddy<br><br>" +
-
-"2️⃣ Cotton<br><br>" +
-
-"3️⃣ Chilli<br><br>" +
-
-"4️⃣ Maize";
+"🎤 Say Again";
 
 playAudio(
 selectedLanguage==="english"
@@ -596,7 +569,7 @@ playSymptoms();
 
 function playSymptoms(){
 
-currentStep = "symptoms";
+currentStep="symptoms";
 
 screenText.innerHTML =
 
@@ -609,16 +582,6 @@ screenText.innerHTML =
 "3️⃣ Leaf Curl<br><br>" +
 
 "4️⃣ Pest Attack";
-
-/* CLEAR */
-
-symptomTimeouts.forEach(
-t=>clearTimeout(t)
-);
-
-symptomTimeouts = [];
-
-/* FILES */
 
 let yellow =
 selectedLanguage==="english"
@@ -639,8 +602,6 @@ let pest =
 selectedLanguage==="english"
 ? "pest_en.m4a"
 : "pest.m4a";
-
-/* CONTINUOUS */
 
 playAudio(yellow,()=>{
 
@@ -678,11 +639,25 @@ symptomTimeouts.forEach(
 t=>clearTimeout(t)
 );
 
-symptomTimeouts = [];
+symptomTimeouts=[];
 
 stopCurrentAudio();
 
-/* BEAUTIFUL SCREEN */
+/* SMS HISTORY */
+
+if(smsHistory){
+
+smsHistory.innerHTML +=
+
+"<div class='message'>" +
+
+"📩 SMS Sent : <b>" + name + "</b>" +
+
+"</div>";
+
+}
+
+/* SCREEN */
 
 screenText.innerHTML =
 
@@ -696,13 +671,9 @@ screenText.innerHTML =
 
 "📞 <b>Press Any Other Key To End Call</b>";
 
-solutionBox.innerText = "";
+currentStep="complaint";
 
-/* IMPORTANT */
-
-currentStep = "complaint";
-
-/* PLAY */
+/* AUDIO */
 
 playAudio(audio,()=>{
 
@@ -718,19 +689,19 @@ selectedLanguage==="english"
 
 }
 
-/* ===== RECORD COMPLAINT ===== */
+/* ===== RECORD ===== */
 
 async function startComplaintRecording(){
 
-currentStep = "recording";
+currentStep="recording";
 
 screenText.innerHTML =
 
 "🎤 <b>Recording Complaint...</b><br><br>" +
 
-"Press 5 To Submit";
+"5️⃣ Submit<br><br>" +
 
-/* AUDIO FIRST */
+"6️⃣ Re-record";
 
 playAudio(
 
@@ -747,7 +718,7 @@ await navigator.mediaDevices
 mediaRecorder =
 new MediaRecorder(stream);
 
-audioChunks = [];
+audioChunks=[];
 
 mediaRecorder.ondataavailable =
 event=>{
@@ -793,7 +764,7 @@ mediaRecorder.start();
 
 }
 
-/* ===== STOP RECORDING ===== */
+/* ===== STOP RECORD ===== */
 
 function stopComplaintRecording(){
 
@@ -815,7 +786,7 @@ endCall();
 
 }
 
-/* ===== END CALL ===== */
+/* ===== END ===== */
 
 function endCall(){
 
@@ -826,6 +797,6 @@ stopWave();
 screenText.innerHTML =
 "📞 <b>Call Ended</b>";
 
-currentStep = "idle";
+currentStep="idle";
 
 }
