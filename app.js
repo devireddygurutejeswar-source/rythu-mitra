@@ -337,11 +337,17 @@ submitComplaint();
 
 }
 
-/* ===== LISTEN ===== */
+/* ===== START LISTEN ===== */
 
 function startListening(){
 
 clearTimeout(voiceTimeout);
+
+/* IMPORTANT */
+
+currentStep = "crop";
+
+startWave();
 
 /* STOP OLD */
 
@@ -351,13 +357,9 @@ recognition.abort();
 
 }catch(e){}
 
-startWave();
-
-/* WAIT BEFORE START */
+/* WAIT */
 
 setTimeout(()=>{
-
-if(currentStep!=="crop") return;
 
 try{
 
@@ -369,9 +371,9 @@ console.log(err);
 
 }
 
-},1200);
+},1500);
 
-/* ===== NO VOICE ===== */
+/* KEEP ACTIVE */
 
 voiceTimeout = setTimeout(()=>{
 
@@ -381,7 +383,7 @@ retryCrop();
 
 }
 
-},6000);
+},5000);
 
 }
 
@@ -553,7 +555,7 @@ clearTimeout(voiceTimeout);
 
 recognition.onend = ()=>{
 
-stopWave();
+/* DO NOTHING */
 
 };
 
@@ -568,6 +570,8 @@ try{
 recognition.abort();
 
 }catch(e){}
+
+clearTimeout(voiceTimeout);
 
 stopWave();
 
@@ -605,7 +609,7 @@ selectedLanguage==="telugu"
 
 "4 - Pest Attack";
 
-/* PREVENT LOOP */
+/* LOCK */
 
 currentStep = "audio";
 
@@ -631,7 +635,7 @@ currentStep = "symptom";
 
 );
 
-},300);
+},500);
 
 });
 
@@ -652,8 +656,6 @@ addSMS(selectedCrop,name);
 
 playAudio(audio,()=>{
 
-/* AFTER AUDIO */
-
 screenText.innerHTML =
 
 "📩 SMS Sent<br><br>" +
@@ -667,8 +669,6 @@ screenText.innerHTML =
 "<br><br>" +
 
 "📞 Any Other Key To End Call";
-
-/* PLAY NEXT AUDIO */
 
 playAudio(
 
