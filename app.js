@@ -33,6 +33,8 @@ let mediaRecorder;
 
 let audioChunks = [];
 
+let symptomTimeouts = [];
+
 /* ===== SPEECH ===== */
 
 window.SpeechRecognition =
@@ -146,7 +148,7 @@ startWave();
 
 playAudio("ringtone.m4a");
 
-/* ===== AFTER 3 SEC ===== */
+/* ===== AFTER RING ===== */
 
 setTimeout(()=>{
 
@@ -175,7 +177,7 @@ selectedLanguage = "telugu";
 
 screenText.innerText =
 
-"🎤 Say Crop Name\n\nPaddy\nCotton\nChilli\nMaize";
+"🎤 Say Crop Name\n\n1 Paddy\n2 Cotton\n3 Chilli\n4 Maize";
 
 playAudio(
 "telugu_crop.m4a",
@@ -196,7 +198,7 @@ selectedLanguage = "english";
 
 screenText.innerText =
 
-"🎤 Say Crop Name\n\nPaddy\nCotton\nChilli\nMaize";
+"🎤 Say Crop Name\n\n1 Paddy\n2 Cotton\n3 Chilli\n4 Maize";
 
 playAudio(
 "english_crop.m4a",
@@ -217,7 +219,11 @@ startListening();
 
 else if(currentStep === "symptoms"){
 
-/* ===== STOP CURRENT AUDIO ===== */
+/* STOP ALL SYMPTOM AUDIOS */
+
+symptomTimeouts.forEach(t=>clearTimeout(t));
+
+symptomTimeouts = [];
 
 if(currentAudio){
 
@@ -227,7 +233,7 @@ currentAudio.currentTime = 0;
 
 }
 
-/* ===== BUTTON 1 ===== */
+/* BUTTON 1 */
 
 if(key==="1"){
 
@@ -240,7 +246,7 @@ selectedLanguage==="english"
 
 }
 
-/* ===== BUTTON 2 ===== */
+/* BUTTON 2 */
 
 else if(key==="2"){
 
@@ -253,7 +259,7 @@ selectedLanguage==="english"
 
 }
 
-/* ===== BUTTON 3 ===== */
+/* BUTTON 3 */
 
 else if(key==="3"){
 
@@ -266,7 +272,7 @@ selectedLanguage==="english"
 
 }
 
-/* ===== BUTTON 4 ===== */
+/* BUTTON 4 */
 
 else if(key==="4"){
 
@@ -281,7 +287,7 @@ selectedLanguage==="english"
 
 }
 
-/* ===== COMPLAINT MENU ===== */
+/* ===== COMPLAINT ===== */
 
 else if(currentStep === "complaint"){
 
@@ -313,7 +319,7 @@ stopComplaintRecording();
 
 }
 
-/* ===== START LISTEN ===== */
+/* ===== START LISTENING ===== */
 
 function startListening(){
 
@@ -442,9 +448,9 @@ screenText.innerText =
 selectedCrop +
 " Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
 
-/* ===== CROP AUDIO ===== */
-
 let cropAudio = "";
+
+/* ===== CROP AUDIO ===== */
 
 if(selectedCrop==="Paddy"){
 
@@ -488,8 +494,6 @@ playSymptoms();
 
 });
 
-currentStep = "symptoms";
-
 }
 
 /* ===== PLAY SYMPTOMS ===== */
@@ -502,6 +506,14 @@ screenText.innerText =
 
 selectedCrop +
 " Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
+
+/* CLEAR OLD TIMEOUTS */
+
+symptomTimeouts.forEach(t=>clearTimeout(t));
+
+symptomTimeouts = [];
+
+/* AUDIO FILES */
 
 let yellow =
 selectedLanguage==="english"
@@ -523,7 +535,13 @@ selectedLanguage==="english"
 ? "pest_en.m4a"
 : "pest.m4a";
 
+/* START FIRST */
+
 playAudio(yellow);
+
+/* SAVE TIMEOUTS */
+
+symptomTimeouts.push(
 
 setTimeout(()=>{
 
@@ -533,7 +551,11 @@ playAudio(spots);
 
 }
 
-},4000);
+},4000)
+
+);
+
+symptomTimeouts.push(
 
 setTimeout(()=>{
 
@@ -543,7 +565,11 @@ playAudio(curl);
 
 }
 
-},8000);
+},8000)
+
+);
+
+symptomTimeouts.push(
 
 setTimeout(()=>{
 
@@ -553,7 +579,9 @@ playAudio(pest);
 
 }
 
-},12000);
+},12000)
+
+);
 
 }
 
