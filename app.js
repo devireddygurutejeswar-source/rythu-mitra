@@ -629,6 +629,8 @@ playAudio(pest);
 
 function showFertilizer(name,audio){
 
+/* CLEAR */
+
 symptomTimeouts.forEach(
 t=>clearTimeout(t)
 );
@@ -637,31 +639,31 @@ symptomTimeouts = [];
 
 stopCurrentAudio();
 
-/* SHOW LONGER */
+/* BEAUTIFUL SCREEN */
 
-screenText.innerText =
+screenText.innerHTML =
 
-"📩 SMS Sent To Mobile\n\n🌱 Fertilizer : " + name;
+"📩 <b>SMS Sent To Mobile</b><br><br>" +
+
+"🌱 <b>Fertilizer :</b> " + name +
+
+"<br><br><hr><br>" +
+
+"🎤 <b>Press 9 To Record Complaint</b><br><br>" +
+
+"📞 <b>Press Any Other Key To End Call</b>";
 
 solutionBox.innerText = "";
-
-/* PLAY */
-
-playAudio(audio,()=>{
-
-/* WAIT */
-
-setTimeout(()=>{
-
-screenText.innerText =
-
-"Press 9 To Record Complaint\n\nPress Any Other Key To End Call";
 
 /* IMPORTANT */
 
 currentStep = "complaint";
 
-/* AUDIO */
+/* PLAY FERTILIZER */
+
+playAudio(audio,()=>{
+
+/* PLAY COMPLAINT AUDIO */
 
 playAudio(
 
@@ -671,12 +673,9 @@ selectedLanguage==="english"
 
 );
 
-},2500);
-
 });
 
 }
-
 /* ===== RECORD COMPLAINT ===== */
 
 async function startComplaintRecording(){
