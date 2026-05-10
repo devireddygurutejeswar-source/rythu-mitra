@@ -1,11 +1,22 @@
-/* ===== ELEMENTS ===== */
+/* ===== SAFE ELEMENTS ===== */
 
-const screenText = document.getElementById("screenText");
-const solutionBox = document.getElementById("solution");
-const timerText = document.getElementById("timer");
-const complaintList = document.getElementById("complaints");
-const wave = document.getElementById("wave");
-const smsHistory = document.getElementById("smsHistory");
+const screenText =
+document.getElementById("screenText");
+
+const solutionBox =
+document.getElementById("solution") || {};
+
+const timerText =
+document.getElementById("timer");
+
+const complaintList =
+document.getElementById("complaints") || document.body;
+
+const wave =
+document.getElementById("wave");
+
+const smsHistory =
+document.getElementById("smsHistory") || document.body;
 
 /* ===== VARIABLES ===== */
 
@@ -77,13 +88,21 @@ callback();
 
 function startWave(){
 
+if(wave){
+
 wave.style.opacity = "1";
+
+}
 
 }
 
 function stopWave(){
 
+if(wave){
+
 wave.style.opacity = "0";
+
+}
 
 }
 
@@ -107,8 +126,12 @@ let secs =
 String(seconds%60)
 .padStart(2,"0");
 
+if(timerText){
+
 timerText.innerText =
 mins + ":" + secs;
+
+}
 
 },1000);
 
@@ -149,7 +172,7 @@ playAudio("welcome.m4a");
 
 }
 
-/* ===== BUTTON ===== */
+/* ===== BUTTONS ===== */
 
 function pressKey(key){
 
@@ -214,8 +237,6 @@ startListening();
 /* ===== SYMPTOMS ===== */
 
 else if(currentStep==="symptoms"){
-
-stopCurrentAudio();
 
 if(key==="1"){
 
@@ -291,19 +312,6 @@ stopComplaintRecording();
 
 }
 
-else if(key==="6"){
-
-if(mediaRecorder &&
-mediaRecorder.state==="recording"){
-
-mediaRecorder.stop();
-
-}
-
-startComplaintRecording();
-
-}
-
 }
 
 }
@@ -344,15 +352,6 @@ selectedLanguage==="english"
 
 try{
 
-recognition.stop();
-
-}
-catch(e){}
-
-setTimeout(()=>{
-
-try{
-
 recognition.start();
 
 }
@@ -361,8 +360,6 @@ catch(e){
 console.log(e);
 
 }
-
-},200);
 
 }
 
@@ -379,14 +376,11 @@ event.results[0][0]
 .toLowerCase()
 .trim();
 
-console.log(text);
-
-/* ===== CHILLI ===== */
+/* CHILLI */
 
 if(
-text.includes("chilli") ||
 text.includes("mirchi") ||
-text.includes("మిర్చి")
+text.includes("chilli")
 ){
 
 selectedCrop =
@@ -398,13 +392,12 @@ cropDetected();
 
 }
 
-/* ===== COTTON ===== */
+/* COTTON */
 
 else if(
-text.includes("cotton") ||
 text.includes("pathi") ||
 text.includes("patti") ||
-text.includes("పత్తి")
+text.includes("cotton")
 ){
 
 selectedCrop =
@@ -416,14 +409,13 @@ cropDetected();
 
 }
 
-/* ===== PADDY ===== */
+/* PADDY */
 
 else if(
-text.includes("paddy") ||
 text.includes("vari") ||
 text.includes("vaari") ||
 text.includes("wari") ||
-text.includes("వరి")
+text.includes("paddy")
 ){
 
 selectedCrop =
@@ -435,13 +427,11 @@ cropDetected();
 
 }
 
-/* ===== MAIZE ===== */
+/* MAIZE */
 
 else if(
-text.includes("maize") ||
 text.includes("mokkajonna") ||
-text.includes("mokka jonna") ||
-text.includes("మొక్కజొన్న")
+text.includes("maize")
 ){
 
 selectedCrop =
@@ -453,7 +443,7 @@ cropDetected();
 
 }
 
-/* ===== RETRY ===== */
+/* RETRY */
 
 else{
 
@@ -484,7 +474,7 @@ startListening();
 
 };
 
-/* ===== FAIL SAFE ===== */
+/* ===== NO SPEECH ===== */
 
 recognition.onend = ()=>{
 
@@ -500,29 +490,15 @@ startListening();
 
 };
 
-recognition.onerror = ()=>{
-
-if(currentStep==="crop"){
-
-setTimeout(()=>{
-
-startListening();
-
-},1500);
-
-}
-
-};
-
-/* ===== CROP DETECTED ===== */
+/* ===== CROP DETECT ===== */
 
 function cropDetected(){
 
-currentStep = "cropDetected";
+currentStep="cropDetected";
 
 screenText.innerHTML =
 
-"🌾 <b>" + selectedCrop + " Detected</b><br><br>" +
+"🌾 <b>" + selectedCrop + "</b><br><br>" +
 
 "🩺 Loading Symptoms...";
 
@@ -530,10 +506,7 @@ let cropAudio = "";
 
 /* AUDIO */
 
-if(
-selectedCrop==="Chilli" ||
-selectedCrop==="మిర్చి"
-){
+if(selectedCrop==="మిర్చి" || selectedCrop==="Chilli"){
 
 cropAudio =
 selectedLanguage==="english"
@@ -542,10 +515,7 @@ selectedLanguage==="english"
 
 }
 
-else if(
-selectedCrop==="Cotton" ||
-selectedCrop==="పత్తి"
-){
+else if(selectedCrop==="పత్తి" || selectedCrop==="Cotton"){
 
 cropAudio =
 selectedLanguage==="english"
@@ -554,10 +524,7 @@ selectedLanguage==="english"
 
 }
 
-else if(
-selectedCrop==="Paddy" ||
-selectedCrop==="వరి"
-){
+else if(selectedCrop==="వరి" || selectedCrop==="Paddy"){
 
 cropAudio =
 selectedLanguage==="english"
@@ -566,10 +533,7 @@ selectedLanguage==="english"
 
 }
 
-else if(
-selectedCrop==="Maize" ||
-selectedCrop==="మొక్కజొన్న"
-){
+else{
 
 cropAudio =
 selectedLanguage==="english"
@@ -577,8 +541,6 @@ selectedLanguage==="english"
 : "maize.m4a";
 
 }
-
-/* PLAY */
 
 playAudio(cropAudio,()=>{
 
@@ -622,44 +584,17 @@ selectedLanguage==="english"
 
 "4️⃣ పురుగు దాడి";
 
-let audioFile =
+playAudio(
 selectedLanguage==="english"
 ? "symptoms_en.m4a"
-: "symptoms.m4a";
-
-playAudio(audioFile);
+: "symptoms.m4a"
+);
 
 }
 
 /* ===== FERTILIZER ===== */
 
 function showFertilizer(name,audio){
-
-stopCurrentAudio();
-
-let today =
-new Date()
-.toLocaleString();
-
-/* SMS */
-
-smsHistory.innerHTML +=
-
-"<div class='message'>" +
-
-"📩 <b>SMS Sent</b><br><br>" +
-
-"🌾 Crop : " + selectedCrop +
-
-"<br><br>" +
-
-"🌱 Fertilizer : " + name +
-
-"<br><br>" +
-
-"📅 " + today +
-
-"</div>";
 
 screenText.innerHTML =
 
@@ -676,6 +611,31 @@ screenText.innerHTML =
 "🎤 Press 9 To Record Complaint<br><br>" +
 
 "📞 Any Other Key To End Call";
+
+if(smsHistory){
+
+let today =
+new Date().toLocaleString();
+
+smsHistory.innerHTML +=
+
+"<div class='message'>" +
+
+"📩 SMS Sent<br><br>" +
+
+"🌾 Crop : " + selectedCrop +
+
+"<br><br>" +
+
+"🌱 Fertilizer : " + name +
+
+"<br><br>" +
+
+"📅 " + today +
+
+"</div>";
+
+}
 
 currentStep="complaint";
 
@@ -701,15 +661,7 @@ screenText.innerHTML =
 
 "🎤 Recording Complaint...<br><br>" +
 
-"5️⃣ Submit<br><br>" +
-
-"6️⃣ Re-record";
-
-playAudio(
-selectedLanguage==="english"
-? "recording_instruction_en.m4a"
-: "recording_instruction.m4a"
-);
+"5️⃣ Submit";
 
 const stream =
 await navigator.mediaDevices
