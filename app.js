@@ -174,7 +174,8 @@ if(key==="1"){
 selectedLanguage = "telugu";
 
 screenText.innerText =
-"🎤 Say Crop Name";
+
+"🎤 Say Crop Name\n\nPaddy\nCotton\nChilli\nMaize";
 
 playAudio(
 "telugu_crop.m4a",
@@ -194,7 +195,8 @@ else if(key==="2"){
 selectedLanguage = "english";
 
 screenText.innerText =
-"🎤 Say Crop Name";
+
+"🎤 Say Crop Name\n\nPaddy\nCotton\nChilli\nMaize";
 
 playAudio(
 "english_crop.m4a",
@@ -283,15 +285,11 @@ selectedLanguage==="english"
 
 else if(currentStep === "complaint"){
 
-/* ===== RECORD ===== */
-
 if(key==="9"){
 
 startComplaintRecording();
 
 }
-
-/* ===== END CALL ===== */
 
 else{
 
@@ -484,17 +482,11 @@ selectedLanguage==="english"
 
 }
 
-/* ===== PLAY CROP AUDIO ===== */
-
-playAudio(cropAudio);
-
-/* ===== PLAY SYMPTOMS ===== */
-
-setTimeout(()=>{
+playAudio(cropAudio,()=>{
 
 playSymptoms();
 
-},2500);
+});
 
 currentStep = "symptoms";
 
@@ -503,6 +495,13 @@ currentStep = "symptoms";
 /* ===== PLAY SYMPTOMS ===== */
 
 function playSymptoms(){
+
+currentStep = "symptoms";
+
+screenText.innerText =
+
+selectedCrop +
+" Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
 
 let yellow =
 selectedLanguage==="english"
@@ -524,25 +523,35 @@ selectedLanguage==="english"
 ? "pest_en.m4a"
 : "pest.m4a";
 
-/* ===== AUDIO SEQUENCE ===== */
-
 playAudio(yellow);
 
 setTimeout(()=>{
 
+if(currentStep==="symptoms"){
+
 playAudio(spots);
+
+}
 
 },4000);
 
 setTimeout(()=>{
 
+if(currentStep==="symptoms"){
+
 playAudio(curl);
+
+}
 
 },8000);
 
 setTimeout(()=>{
 
+if(currentStep==="symptoms"){
+
 playAudio(pest);
+
+}
 
 },12000);
 
@@ -557,11 +566,7 @@ currentStep = "fertilizer";
 solutionBox.innerText =
 "🌱 Fertilizer : " + name;
 
-/* ===== FERTILIZER AUDIO ===== */
-
 playAudio(audio,()=>{
-
-/* ===== SMS ===== */
 
 screenText.innerText =
 "📩 SMS Sent To Mobile";
@@ -573,8 +578,6 @@ selectedLanguage==="english"
 : "sms.m4a",
 
 ()=>{
-
-/* ===== COMPLAINT ===== */
 
 screenText.innerText =
 
