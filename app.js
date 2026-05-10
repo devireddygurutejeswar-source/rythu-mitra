@@ -312,74 +312,83 @@ function pressKey(num){
 
 function startListening(){
 
-  clearTimeout(voiceTimeout);
+clearTimeout(voiceTimeout);
 
-  currentStep = "crop";
+currentStep = "crop";
 
-  startWave();
+startWave();
 
-  try{
+/* START MIC */
 
-    recognition.start();
+try{
 
-  }catch(err){
+recognition.start();
 
-    console.log(err);
+}catch(err){
 
-  }
-
-  voiceTimeout = setTimeout(()=>{
-
-    if(currentStep==="crop"){
-
-      try{
-
-        recognition.stop();
-
-      }catch(e){}
-
-      stopWave();
-
-      screenText.innerHTML =
-
-      selectedLanguage==="telugu"
-
-      ?
-
-      "❌ పంట గుర్తించలేదు<br><br>" +
-      "🎤 మళ్లీ చెప్పండి"
-
-      :
-
-      "❌ Crop Not Recognized<br><br>" +
-      "🎤 Please Speak Again";
-
-      playAudio(
-
-      selectedLanguage==="telugu"
-      ? "retry.m4a"
-      : "retry_english.m4a",
-
-      ()=>{
-
-        startListening();
-
-      }
-
-      );
-
-    }
-
-  },
-
-  selectedLanguage==="telugu"
-  ? 12000
-  : 6000
-
-  );
+console.log(err);
 
 }
 
+/* WAIT FULL TIME EVEN IF SILENT */
+
+voiceTimeout = setTimeout(()=>{
+
+if(currentStep==="crop"){
+
+try{
+
+recognition.stop();
+
+}catch(e){}
+
+stopWave();
+
+/* SHOW RETRY */
+
+screenText.innerHTML =
+
+selectedLanguage==="telugu"
+
+?
+
+"❌ పంట గుర్తించలేదు<br><br>" +
+"🎤 మళ్లీ చెప్పండి"
+
+:
+
+"❌ Crop Not Recognized<br><br>" +
+"🎤 Please Speak Again";
+
+/* PLAY RETRY AUDIO */
+
+playAudio(
+
+selectedLanguage==="telugu"
+? "retry.m4a"
+: "retry_english.m4a",
+
+()=>{
+
+startListening();
+
+}
+
+);
+
+}
+
+},
+
+selectedLanguage==="telugu"
+
+? 12000
+
+: 8000
+
+);
+
+}
 /* ===== RESULT ===== */
 
 recognition.onresult = (event)=>{
