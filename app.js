@@ -45,29 +45,44 @@ recognition.maxAlternatives = 5;
 
 function playAudio(file, callback){
 
+  /* CLEAR OLD AUDIO */
+
   if(currentAudio){
 
     currentAudio.pause();
     currentAudio.currentTime = 0;
     currentAudio.onended = null;
+    currentAudio.src = "";
 
   }
 
-  currentAudio = new Audio("audio/" + file);
+  /* CREATE NEW AUDIO */
+
+  currentAudio = new Audio();
+
+  currentAudio.src = "audio/" + file;
 
   currentAudio.preload = "auto";
 
+  currentAudio.load();
+
   currentAudio.play().catch(err=>{
+
     console.log(err);
+
   });
 
   currentAudio.onended = ()=>{
 
-    if(callback){
+    setTimeout(()=>{
 
-      callback();
+      if(callback){
 
-    }
+        callback();
+
+      }
+
+    },200);
 
   };
 
@@ -151,6 +166,8 @@ function pressKey(num){
 
   if(currentStep==="language"){
 
+    /* ===== TELUGU ===== */
+
     if(num===1){
 
       selectedLanguage = "telugu";
@@ -171,17 +188,19 @@ function pressKey(num){
 
       "🌽 మొక్కజొన్న";
 
-      playAudio(
-      "telugu_crop.m4a",
-      ()=>{
+      playAudio("telugu_crop.m4a");
+
+      currentAudio.onended = ()=>{
 
         startListening();
 
-      });
+      };
 
       return;
 
     }
+
+    /* ===== ENGLISH ===== */
 
     if(num===2){
 
@@ -203,13 +222,13 @@ function pressKey(num){
 
       "🌽 Maize";
 
-      playAudio(
-      "english_crop.m4a",
-      ()=>{
+      playAudio("english_crop.m4a");
+
+      currentAudio.onended = ()=>{
 
         startListening();
 
-      });
+      };
 
       return;
 
@@ -303,19 +322,15 @@ function startListening(){
 
   startWave();
 
-  setTimeout(()=>{
+  try{
 
-    try{
+    recognition.start();
 
-      recognition.start();
+  }catch(err){
 
-    }catch(err){
+    console.log(err);
 
-      console.log(err);
-
-    }
-
-  },500);
+  }
 
   /* WAIT 5 SEC */
 
@@ -328,6 +343,8 @@ function startListening(){
         recognition.stop();
 
       }catch(e){}
+
+      stopWave();
 
       screenText.innerHTML =
 
@@ -470,6 +487,8 @@ recognition.onresult = (event)=>{
   else{
 
     currentStep = "crop";
+
+    stopWave();
 
     screenText.innerHTML =
 
@@ -760,42 +779,44 @@ function startComplaint(){
 
   selectedLanguage==="telugu"
   ? "recording_instruction.m4a"
-  : "recording_instruction_en.m4a"
+  : "recording_instruction_en.m4a",
 
-  );
+  ()=>{
 
-  navigator.mediaDevices
-  .getUserMedia({audio:true})
-  .then(stream=>{
+    navigator.mediaDevices
+    .getUserMedia({audio:true})
+    .then(stream=>{
 
-    mediaRecorder =
-    new MediaRecorder(stream);
+      mediaRecorder =
+      new MediaRecorder(stream);
 
-    audioChunks = [];
+      audioChunks = [];
 
-    mediaRecorder.start();
+      mediaRecorder.start();
 
-    mediaRecorder.ondataavailable =
-    event=>{
+      mediaRecorder.ondataavailable =
+      event=>{
 
-      audioChunks.push(event.data);
+        audioChunks.push(event.data);
 
-    };
+      };
 
-    mediaRecorder.onstop = ()=>{
+      mediaRecorder.onstop = ()=>{
 
-      const audioBlob =
-      new Blob(audioChunks,
-      {type:"audio/webm"});
+        const audioBlob =
+        new Blob(audioChunks,
+        {type:"audio/webm"});
 
-      complaintAudioURL =
-      URL.createObjectURL(audioBlob);
+        complaintAudioURL =
+        URL.createObjectURL(audioBlob);
 
-      addComplaint(
-      complaintAudioURL
-      );
+        addComplaint(
+        complaintAudioURL
+        );
 
-    };
+      };
+
+    });
 
   });
 
@@ -822,7 +843,7 @@ function submitComplaint(){
 
   selectedLanguage==="telugu"
   ? "submitted.m4a"
-  : "submitted_en_.m4a"
+  : "submitted_en.m4a"
 
   );
 
