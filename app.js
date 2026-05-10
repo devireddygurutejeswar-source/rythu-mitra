@@ -37,15 +37,13 @@ window.webkitSpeechRecognition;
 
 const recognition = new SpeechRecognition();
 
-recognition.continuous = false;
+recognition.continuous = true;
 recognition.interimResults = false;
 recognition.maxAlternatives = 5;
 
 /* ===== AUDIO ===== */
 
 function playAudio(file, callback){
-
-  /* CLEAR OLD AUDIO */
 
   if(currentAudio){
 
@@ -55,8 +53,6 @@ function playAudio(file, callback){
     currentAudio.src = "";
 
   }
-
-  /* CREATE NEW AUDIO */
 
   currentAudio = new Audio();
 
@@ -82,7 +78,7 @@ function playAudio(file, callback){
 
       }
 
-    },200);
+    },100);
 
   };
 
@@ -332,8 +328,6 @@ function startListening(){
 
   }
 
-  /* WAIT 5 SEC */
-
   voiceTimeout = setTimeout(()=>{
 
     if(currentStep==="crop"){
@@ -376,7 +370,13 @@ function startListening(){
 
     }
 
-  },5000);
+  },
+
+  selectedLanguage==="telugu"
+  ? 12000
+  : 6000
+
+  );
 
 }
 
@@ -385,6 +385,12 @@ function startListening(){
 recognition.onresult = (event)=>{
 
   clearTimeout(voiceTimeout);
+
+  try{
+
+    recognition.stop();
+
+  }catch(e){}
 
   stopWave();
 
@@ -488,8 +494,6 @@ recognition.onresult = (event)=>{
 
     currentStep = "crop";
 
-    stopWave();
-
     screenText.innerHTML =
 
     selectedLanguage==="telugu"
@@ -530,7 +534,7 @@ recognition.onerror = ()=>{};
 
 recognition.onend = ()=>{
 
-  stopWave();
+  /* KEEP STABLE */
 
 };
 
@@ -598,8 +602,6 @@ function cropDetected(audio){
 
   playAudio(audio,()=>{
 
-    /* YELLOW */
-
     playAudio(
 
     selectedLanguage==="telugu"
@@ -607,8 +609,6 @@ function cropDetected(audio){
     : "yellow_en.m4a",
 
     ()=>{
-
-      /* SPOTS */
 
       playAudio(
 
@@ -618,8 +618,6 @@ function cropDetected(audio){
 
       ()=>{
 
-        /* CURL */
-
         playAudio(
 
         selectedLanguage==="telugu"
@@ -627,8 +625,6 @@ function cropDetected(audio){
         : "curl_en.m4a",
 
         ()=>{
-
-          /* PEST */
 
           playAudio(
 
