@@ -309,6 +309,8 @@ console.log(e);
 recognition.onresult =
 function(event){
 
+stopWave();
+
 let text =
 event.results[0][0]
 .transcript
@@ -317,10 +319,12 @@ event.results[0][0]
 
 console.log(text);
 
-/* BETTER MATCHING */
+/* ===== PADDY ===== */
 
 if(
-text.includes("paddy")
+text.includes("paddy") ||
+text.includes("vari") ||
+text.includes("వరి")
 ){
 
 selectedCrop = "Paddy";
@@ -329,10 +333,12 @@ cropDetected();
 
 }
 
+/* ===== COTTON ===== */
+
 else if(
-text.includes("cotton")
-||
-text.includes("cotten")
+text.includes("cotton") ||
+text.includes("cotten") ||
+text.includes("పత్తి")
 ){
 
 selectedCrop = "Cotton";
@@ -341,10 +347,13 @@ cropDetected();
 
 }
 
+/* ===== CHILLI ===== */
+
 else if(
-text.includes("chilli")
-||
-text.includes("chili")
+text.includes("chilli") ||
+text.includes("chili") ||
+text.includes("mirchi") ||
+text.includes("మిర్చి")
 ){
 
 selectedCrop = "Chilli";
@@ -353,10 +362,12 @@ cropDetected();
 
 }
 
+/* ===== MAIZE ===== */
+
 else if(
-text.includes("maize")
-||
-text.includes("maze")
+text.includes("maize") ||
+text.includes("maze") ||
+text.includes("మొక్కజొన్న")
 ){
 
 selectedCrop = "Maize";
@@ -365,9 +376,24 @@ cropDetected();
 
 }
 
+/* ===== NOT RECOGNIZED ===== */
+
 else{
 
+screenText.innerText =
+
+"❌ Crop Not Recognized\n\nSpeak Again";
+
 playAudio("retry.m4a");
+
+setTimeout(()=>{
+
+screenText.innerText =
+"🎤 Say Crop Name";
+
+startListening();
+
+},2500);
 
 }
 
