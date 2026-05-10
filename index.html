@@ -33,11 +33,13 @@ flex-wrap:wrap;
 
 .phone{
 
-width:340px;
-background:#0d1117;
-border-radius:40px;
+width:360px;
+background:#050b12;
+border-radius:45px;
 padding:18px;
-box-shadow:0 0 25px rgba(0,0,0,0.5);
+box-shadow:
+0 0 20px rgba(0,0,0,0.8),
+inset 0 0 10px rgba(255,255,255,0.05);
 
 }
 
@@ -50,7 +52,8 @@ justify-content:space-between;
 align-items:center;
 color:white;
 font-size:18px;
-margin-bottom:12px;
+margin-bottom:15px;
+padding:0 5px;
 
 }
 
@@ -59,16 +62,18 @@ margin-bottom:12px;
 #screen{
 
 height:470px;
-background:linear-gradient(
+
+background:
+linear-gradient(
 to bottom,
-#c9fbff,
-#ebffff
+#d9ffff,
+#efffff
 );
 
-border-radius:28px;
+border-radius:30px;
 padding:25px;
-overflow:hidden;
 position:relative;
+overflow:hidden;
 text-align:center;
 
 }
@@ -77,10 +82,10 @@ text-align:center;
 
 #screenText{
 
-font-size:28px;
+font-size:24px;
 font-weight:bold;
-color:#123;
-line-height:1.5;
+color:#233;
+line-height:1.6;
 margin-top:10px;
 
 }
@@ -89,12 +94,12 @@ margin-top:10px;
 
 #wave{
 
-width:90px;
-height:90px;
+width:85px;
+height:85px;
 border-radius:50%;
-background:#00d26a;
+background:#00d95f;
 margin:auto;
-margin-top:25px;
+margin-top:30px;
 opacity:0;
 animation:pulse 1s infinite;
 
@@ -103,24 +108,18 @@ animation:pulse 1s infinite;
 @keyframes pulse{
 
 0%{
-
-transform:scale(0.8);
-opacity:0.4;
-
+transform:scale(0.85);
+opacity:0.5;
 }
 
 50%{
-
-transform:scale(1.1);
+transform:scale(1.08);
 opacity:1;
-
 }
 
 100%{
-
-transform:scale(0.8);
-opacity:0.4;
-
+transform:scale(0.85);
+opacity:0.5;
 }
 
 }
@@ -131,20 +130,32 @@ opacity:0.4;
 
 display:grid;
 grid-template-columns:repeat(3,1fr);
-gap:16px;
-margin-top:25px;
+gap:18px;
+margin-top:28px;
+padding:0 12px;
 
 }
 
 .keypad button{
 
-height:62px;
+height:68px;
 border:none;
-border-radius:18px;
-font-size:28px;
-background:#111827;
+border-radius:20px;
+
+background:
+linear-gradient(
+to bottom,
+#111827,
+#0b1220
+);
+
 color:white;
-box-shadow:0 4px 10px rgba(0,0,0,0.4);
+font-size:30px;
+font-weight:bold;
+
+box-shadow:
+0 4px 10px rgba(0,0,0,0.5),
+inset 0 1px 1px rgba(255,255,255,0.1);
 
 }
 
@@ -154,20 +165,23 @@ box-shadow:0 4px 10px rgba(0,0,0,0.4);
 
 display:flex;
 justify-content:center;
-gap:40px;
-margin-top:22px;
+gap:45px;
+margin-top:24px;
 
 }
 
 .callBtn,
 .endBtn{
 
-width:78px;
-height:78px;
+width:82px;
+height:82px;
 border:none;
 border-radius:50%;
-font-size:34px;
+font-size:36px;
 color:white;
+
+box-shadow:
+0 4px 12px rgba(0,0,0,0.5);
 
 }
 
@@ -179,7 +193,7 @@ background:#00b140;
 
 .endBtn{
 
-background:#ff2b2b;
+background:#ff2f2f;
 
 }
 
@@ -187,14 +201,14 @@ background:#ff2b2b;
 
 .sidePanel{
 
-width:350px;
+width:360px;
 display:flex;
 flex-direction:column;
 gap:20px;
 
 }
 
-/* ===== CARDS ===== */
+/* ===== CARD ===== */
 
 .card{
 
@@ -202,12 +216,15 @@ background:white;
 padding:22px;
 border-radius:24px;
 
+box-shadow:
+0 4px 10px rgba(0,0,0,0.2);
+
 }
 
 .card h2{
 
 color:#1f5d39;
-font-size:22px;
+font-size:24px;
 margin-bottom:18px;
 
 }
@@ -216,7 +233,7 @@ margin-bottom:18px;
 
 .message{
 
-background:#e9ffd2;
+background:#ebffd5;
 padding:15px;
 border-radius:16px;
 margin-bottom:14px;
@@ -260,7 +277,6 @@ width:95%;
 }
 
 </style>
-
 </head>
 
 <body>
