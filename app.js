@@ -235,7 +235,7 @@ return;
 
 }
 
-/* ===== SYMPTOM ===== */
+/* ===== SYMPTOMS ===== */
 
 if(currentStep==="symptom"){
 
@@ -322,6 +322,18 @@ function startListening(){
 
 startWave();
 
+screenText.innerText =
+
+selectedLanguage==="telugu"
+
+?
+
+"🎤 పంట పేరు చెప్పండి\n\n🌶️ మిర్చి\n🌿 పత్తి\n🌾 వరి\n🌽 మొక్కజొన్న"
+
+:
+
+"🎤 Say Crop Name\n\n🌶️ Chilli\n🌿 Cotton\n🌾 Paddy\n🌽 Maize";
+
 try{
 
 recognition.stop();
@@ -342,11 +354,57 @@ console.log(err);
 
 },300);
 
+/* ===== 5 SEC FAIL ===== */
+
+clearTimeout(window.voiceTimeout);
+
+window.voiceTimeout = setTimeout(()=>{
+
+if(currentStep==="crop"){
+
+try{
+
+recognition.stop();
+
+}catch(e){}
+
+screenText.innerText =
+
+selectedLanguage==="telugu"
+
+?
+
+"❌ శబ్దం వినిపించలేదు\n\n🎤 మళ్లీ చెప్పండి"
+
+:
+
+"❌ No Voice Detected\n\n🎤 Say Again";
+
+playAudio(
+
+selectedLanguage==="telugu"
+? "retry.m4a"
+: "retry_en.m4a",
+
+()=>{
+
+startListening();
+
+}
+
+);
+
+}
+
+},5000);
+
 }
 
 /* ===== RESULT ===== */
 
 recognition.onresult = (event)=>{
+
+clearTimeout(window.voiceTimeout);
 
 stopWave();
 
@@ -482,6 +540,8 @@ startListening();
 
 recognition.onerror = ()=>{
 
+clearTimeout(window.voiceTimeout);
+
 if(currentStep==="crop"){
 
 setTimeout(()=>{
@@ -498,6 +558,8 @@ recognition.onend = ()=>{
 
 if(currentStep==="crop"){
 
+clearTimeout(window.voiceTimeout);
+
 setTimeout(()=>{
 
 startListening();
@@ -508,7 +570,7 @@ startListening();
 
 };
 
-/* ===== CROP DETECT ===== */
+/* ===== CROP ===== */
 
 function cropDetected(audio){
 
@@ -536,7 +598,7 @@ playSymptoms();
 
 }
 
-/* ===== SYMPTOMS ===== */
+/* ===== PLAY SYMPTOMS ===== */
 
 function playSymptoms(){
 
@@ -662,7 +724,7 @@ ${s.time}
 
 }
 
-/* ===== COMPLAINT ===== */
+/* ===== START RECORD ===== */
 
 function startComplaint(){
 
@@ -760,7 +822,7 @@ clearInterval(timerInterval);
 
 }
 
-/* ===== HISTORY ===== */
+/* ===== COMPLAINTS ===== */
 
 function addComplaint(audioURL){
 
