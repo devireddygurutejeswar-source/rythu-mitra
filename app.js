@@ -1,22 +1,19 @@
-/* ===== SAFE ELEMENTS ===== */
+/* ===== ELEMENTS ===== */
 
 const screenText =
 document.getElementById("screenText");
 
-const solutionBox =
-document.getElementById("solution") || {};
-
 const timerText =
 document.getElementById("timer");
-
-const complaintList =
-document.getElementById("complaints") || document.body;
 
 const wave =
 document.getElementById("wave");
 
 const smsHistory =
-document.getElementById("smsHistory") || document.body;
+document.getElementById("smsHistory");
+
+const complaintList =
+document.getElementById("complaints");
 
 /* ===== VARIABLES ===== */
 
@@ -24,8 +21,10 @@ let currentStep = "idle";
 let selectedLanguage = "";
 let selectedCrop = "";
 let currentAudio = null;
+
 let timerInterval;
 let seconds = 0;
+
 let mediaRecorder;
 let audioChunks = [];
 
@@ -38,7 +37,7 @@ window.webkitSpeechRecognition;
 const recognition =
 new webkitSpeechRecognition();
 
-recognition.lang = "en-IN";
+recognition.lang = "te-IN";
 recognition.continuous = false;
 recognition.interimResults = false;
 
@@ -84,28 +83,6 @@ callback();
 
 }
 
-/* ===== WAVE ===== */
-
-function startWave(){
-
-if(wave){
-
-wave.style.opacity = "1";
-
-}
-
-}
-
-function stopWave(){
-
-if(wave){
-
-wave.style.opacity = "0";
-
-}
-
-}
-
 /* ===== TIMER ===== */
 
 function startTimer(){
@@ -126,12 +103,8 @@ let secs =
 String(seconds%60)
 .padStart(2,"0");
 
-if(timerText){
-
-timerText.innerText =
+timerText.innerHTML =
 mins + ":" + secs;
-
-}
 
 },1000);
 
@@ -143,11 +116,25 @@ clearInterval(timerInterval);
 
 }
 
+/* ===== WAVE ===== */
+
+function startWave(){
+
+wave.style.opacity = "1";
+
+}
+
+function stopWave(){
+
+wave.style.opacity = "0";
+
+}
+
 /* ===== START CALL ===== */
 
 function startCall(){
 
-currentStep = "language";
+currentStep = "calling";
 
 screenText.innerHTML =
 "📞 Calling...";
@@ -157,6 +144,8 @@ playAudio("ringtone.m4a");
 setTimeout(()=>{
 
 startTimer();
+
+currentStep = "language";
 
 screenText.innerHTML =
 
@@ -172,7 +161,24 @@ playAudio("welcome.m4a");
 
 }
 
-/* ===== BUTTONS ===== */
+/* ===== END CALL ===== */
+
+function endCall(){
+
+stopCurrentAudio();
+
+stopTimer();
+
+stopWave();
+
+screenText.innerHTML =
+"📞 Call Ended";
+
+currentStep = "idle";
+
+}
+
+/* ===== BUTTON ===== */
 
 function pressKey(key){
 
@@ -183,6 +189,8 @@ if(currentStep==="language"){
 if(key==="1"){
 
 selectedLanguage="telugu";
+
+recognition.lang = "te-IN";
 
 screenText.innerHTML =
 
@@ -209,6 +217,8 @@ startListening();
 else if(key==="2"){
 
 selectedLanguage="english";
+
+recognition.lang = "en-IN";
 
 screenText.innerHTML =
 
@@ -238,6 +248,8 @@ startListening();
 
 else if(currentStep==="symptoms"){
 
+stopCurrentAudio();
+
 if(key==="1"){
 
 showFertilizer(
@@ -249,7 +261,7 @@ selectedLanguage==="english"
 
 }
 
-else if(key==="2"){
+if(key==="2"){
 
 showFertilizer(
 "Mancozeb",
@@ -260,7 +272,7 @@ selectedLanguage==="english"
 
 }
 
-else if(key==="3"){
+if(key==="3"){
 
 showFertilizer(
 "Neem Oil",
@@ -271,7 +283,7 @@ selectedLanguage==="english"
 
 }
 
-else if(key==="4"){
+if(key==="4"){
 
 showFertilizer(
 "Spinosad",
@@ -312,54 +324,41 @@ stopComplaintRecording();
 
 }
 
+if(key==="6"){
+
+restartRecording();
+
+}
+
 }
 
 }
 
-/* ===== LISTEN ===== */
+/* ===== START LISTEN ===== */
 
 function startListening(){
 
 startWave();
 
-screenText.innerHTML =
+try{
 
-selectedLanguage==="english"
+recognition.stop();
 
-?
+}catch(e){}
 
-"🎤 <b>Listening...</b><br><br>" +
-
-"🌶️ Chilli<br><br>" +
-
-"🌿 Cotton<br><br>" +
-
-"🌾 Paddy<br><br>" +
-
-"🌽 Maize"
-
-:
-
-"🎤 <b>వింటున్నాను...</b><br><br>" +
-
-"🌶️ మిర్చి<br><br>" +
-
-"🌿 పత్తి<br><br>" +
-
-"🌾 వరి<br><br>" +
-
-"🌽 మొక్కజొన్న";
+setTimeout(()=>{
 
 try{
 
 recognition.start();
 
-}
-catch(e){
+}catch(e){
 
 console.log(e);
 
 }
+
+},200);
 
 }
 
@@ -376,74 +375,79 @@ event.results[0][0]
 .toLowerCase()
 .trim();
 
-/* CHILLI */
+console.log(text);
+
+/* ===== MIRCHI ===== */
 
 if(
 text.includes("mirchi") ||
+text.includes("మిర్చి") ||
 text.includes("chilli")
 ){
 
 selectedCrop =
-selectedLanguage==="telugu"
-? "మిర్చి"
-: "Chilli";
+selectedLanguage==="english"
+? "Chilli"
+: "మిర్చి";
 
 cropDetected();
 
 }
 
-/* COTTON */
+/* ===== COTTON ===== */
 
 else if(
 text.includes("pathi") ||
 text.includes("patti") ||
+text.includes("పత్తి") ||
 text.includes("cotton")
 ){
 
 selectedCrop =
-selectedLanguage==="telugu"
-? "పత్తి"
-: "Cotton";
+selectedLanguage==="english"
+? "Cotton"
+: "పత్తి";
 
 cropDetected();
 
 }
 
-/* PADDY */
+/* ===== PADDY ===== */
 
 else if(
 text.includes("vari") ||
 text.includes("vaari") ||
-text.includes("wari") ||
+text.includes("వరి") ||
 text.includes("paddy")
 ){
 
 selectedCrop =
-selectedLanguage==="telugu"
-? "వరి"
-: "Paddy";
+selectedLanguage==="english"
+? "Paddy"
+: "వరి";
 
 cropDetected();
 
 }
 
-/* MAIZE */
+/* ===== MAIZE ===== */
 
 else if(
 text.includes("mokkajonna") ||
+text.includes("మొక్కజొన్న") ||
 text.includes("maize")
 ){
 
 selectedCrop =
-selectedLanguage==="telugu"
-? "మొక్కజొన్న"
-: "Maize";
+selectedLanguage==="english"
+? "Maize"
+: "మొక్కజొన్న";
 
 cropDetected();
 
 }
 
-/* RETRY */
+/* ===== NOT RECOGNIZED ===== */
 
 else{
 
@@ -453,11 +457,31 @@ selectedLanguage==="english"
 
 ?
 
-"❌ Crop Not Recognized<br><br>🎤 Say Again"
+"❌ Crop Not Recognized<br><br>" +
+
+"🎤 Say Again<br><br>" +
+
+"🌶️ Chilli<br><br>" +
+
+"🌿 Cotton<br><br>" +
+
+"🌾 Paddy<br><br>" +
+
+"🌽 Maize"
 
 :
 
-"❌ పంట గుర్తించలేదు<br><br>🎤 మళ్లీ చెప్పండి";
+"❌ పంట గుర్తించలేదు<br><br>" +
+
+"🎤 మళ్లీ చెప్పండి<br><br>" +
+
+"🌶️ మిర్చి<br><br>" +
+
+"🌿 పత్తి<br><br>" +
+
+"🌾 వరి<br><br>" +
+
+"🌽 మొక్కజొన్న";
 
 playAudio(
 selectedLanguage==="english"
@@ -474,7 +498,21 @@ startListening();
 
 };
 
-/* ===== NO SPEECH ===== */
+/* ===== FAIL SAFE ===== */
+
+recognition.onerror = ()=>{
+
+if(currentStep==="crop"){
+
+setTimeout(()=>{
+
+startListening();
+
+},1500);
+
+}
+
+};
 
 recognition.onend = ()=>{
 
@@ -490,59 +528,79 @@ startListening();
 
 };
 
-/* ===== CROP DETECT ===== */
+/* ===== CROP DETECTED ===== */
 
 function cropDetected(){
 
-currentStep="cropDetected";
+currentStep = "cropDetected";
 
 screenText.innerHTML =
 
 "🌾 <b>" + selectedCrop + "</b><br><br>" +
 
-"🩺 Loading Symptoms...";
+"🩺 Symptoms Loading...";
 
-let cropAudio = "";
+let audioFile = "";
 
-/* AUDIO */
+/* ===== CHILLI ===== */
 
-if(selectedCrop==="మిర్చి" || selectedCrop==="Chilli"){
+if(
+selectedCrop==="Chilli" ||
+selectedCrop==="మిర్చి"
+){
 
-cropAudio =
+audioFile =
 selectedLanguage==="english"
 ? "chilli_en.m4a"
 : "chilli.m4a";
 
 }
 
-else if(selectedCrop==="పత్తి" || selectedCrop==="Cotton"){
+/* ===== COTTON ===== */
 
-cropAudio =
+if(
+selectedCrop==="Cotton" ||
+selectedCrop==="పత్తి"
+){
+
+audioFile =
 selectedLanguage==="english"
 ? "cotton_en.m4a"
 : "cotton.m4a";
 
 }
 
-else if(selectedCrop==="వరి" || selectedCrop==="Paddy"){
+/* ===== PADDY ===== */
 
-cropAudio =
+if(
+selectedCrop==="Paddy" ||
+selectedCrop==="వరి"
+){
+
+audioFile =
 selectedLanguage==="english"
 ? "paddy_en.m4a"
 : "paddy.m4a";
 
 }
 
-else{
+/* ===== MAIZE ===== */
 
-cropAudio =
+if(
+selectedCrop==="Maize" ||
+selectedCrop==="మొక్కజొన్న"
+){
+
+audioFile =
 selectedLanguage==="english"
 ? "maize_en.m4a"
 : "maize.m4a";
 
 }
 
-playAudio(cropAudio,()=>{
+/* ===== PLAY ===== */
+
+playAudio(audioFile,()=>{
 
 playSymptoms();
 
@@ -554,7 +612,7 @@ playSymptoms();
 
 function playSymptoms(){
 
-currentStep="symptoms";
+currentStep = "symptoms";
 
 screenText.innerHTML =
 
@@ -594,25 +652,9 @@ selectedLanguage==="english"
 
 /* ===== FERTILIZER ===== */
 
-function showFertilizer(name,audio){
+function showFertilizer(name,audioFile){
 
-screenText.innerHTML =
-
-"📩 <b>SMS Sent To Mobile</b><br><br>" +
-
-"🌾 Crop : " + selectedCrop +
-
-"<br><br>" +
-
-"🌱 Fertilizer : " + name +
-
-"<br><br>" +
-
-"🎤 Press 9 To Record Complaint<br><br>" +
-
-"📞 Any Other Key To End Call";
-
-if(smsHistory){
+currentStep = "complaint";
 
 let today =
 new Date().toLocaleString();
@@ -621,7 +663,7 @@ smsHistory.innerHTML +=
 
 "<div class='message'>" +
 
-"📩 SMS Sent<br><br>" +
+"📩 <b>SMS Sent</b><br><br>" +
 
 "🌾 Crop : " + selectedCrop +
 
@@ -635,11 +677,19 @@ smsHistory.innerHTML +=
 
 "</div>";
 
-}
+screenText.innerHTML =
 
-currentStep="complaint";
+"📩 SMS Sent To Mobile<br><br>" +
 
-playAudio(audio,()=>{
+"🌱 " + name +
+
+"<br><br>" +
+
+"🎤 Press 9 To Record Complaint<br><br>" +
+
+"📞 Any Other Key To End Call";
+
+playAudio(audioFile,()=>{
 
 playAudio(
 selectedLanguage==="english"
@@ -655,13 +705,21 @@ selectedLanguage==="english"
 
 async function startComplaintRecording(){
 
-currentStep="recording";
+currentStep = "recording";
 
 screenText.innerHTML =
 
 "🎤 Recording Complaint...<br><br>" +
 
-"5️⃣ Submit";
+"5️⃣ Submit<br><br>" +
+
+"6️⃣ Re-record";
+
+playAudio(
+selectedLanguage==="english"
+? "recording_instruction_en.m4a"
+: "recording_instruction.m4a"
+);
 
 const stream =
 await navigator.mediaDevices
@@ -670,7 +728,7 @@ await navigator.mediaDevices
 mediaRecorder =
 new MediaRecorder(stream);
 
-audioChunks=[];
+audioChunks = [];
 
 mediaRecorder.ondataavailable =
 event=>{
@@ -694,17 +752,17 @@ audio.controls = true;
 
 audio.src = audioURL;
 
-const item =
+const div =
 document.createElement("div");
 
-item.className = "message";
+div.className = "message";
 
-item.innerHTML =
-"<p>Complaint Recorded</p>";
+div.innerHTML =
+"<b>Complaint Recorded</b><br><br>";
 
-item.appendChild(audio);
+div.appendChild(audio);
 
-complaintList.appendChild(item);
+complaintList.appendChild(div);
 
 };
 
@@ -731,19 +789,21 @@ endCall();
 
 }
 
-/* ===== END ===== */
+/* ===== RE-RECORD ===== */
 
-function endCall(){
+function restartRecording(){
 
-stopTimer();
+if(mediaRecorder &&
+mediaRecorder.state==="recording"){
 
-stopWave();
+mediaRecorder.stop();
 
-stopCurrentAudio();
+}
 
-screenText.innerHTML =
-"📞 Call Ended";
+setTimeout(()=>{
 
-currentStep="idle";
+startComplaintRecording();
+
+},500);
 
 }
