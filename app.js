@@ -405,23 +405,71 @@ function cropDetected(){
 
 stopWave();
 
+/* ===== SCREEN ===== */
+
 screenText.innerText =
+
 selectedCrop +
-"\nDetected\n\n1 Yellow\n2 Spots\n3 Curl\n4 Pest";
+" Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
 
-if(selectedLanguage === "telugu"){
+/* ===== CROP DETECTED AUDIO ===== */
 
-playAudio("complaint.m4a");
+if(selectedCrop === "Paddy"){
+
+playAudio("paddy.m4a");
+
+}
+
+else if(selectedCrop === "Cotton"){
+
+playAudio("cotton.m4a");
 
 }
 
-else{
+else if(selectedCrop === "Chilli"){
 
-playAudio("complaint.m4a");
+playAudio("chilli.m4a");
 
 }
+
+else if(selectedCrop === "Maize"){
+
+playAudio("maize.m4a");
+
+}
+
+/* ===== AFTER CROP AUDIO ===== */
+
+setTimeout(()=>{
+
+playSymptoms();
+
+},2500);
 
 currentStep = "symptoms";
+
+}
+function playSymptoms(){
+
+playAudio("yellow.m4a");
+
+setTimeout(()=>{
+
+playAudio("spots.m4a");
+
+},2500);
+
+setTimeout(()=>{
+
+playAudio("curl.m4a");
+
+},5000);
+
+setTimeout(()=>{
+
+playAudio("pest.m4a");
+
+},7500);
 
 }
 
