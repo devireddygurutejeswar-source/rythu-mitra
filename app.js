@@ -1,62 +1,50 @@
+/* ===== ELEMENTS ===== */
+
 const screenText =
 document.getElementById("screenText");
 
 const solutionBox =
 document.getElementById("solution");
 
-const waves =
-document.getElementById("waves");
+const timerText =
+document.getElementById("timer");
 
-const smsBox =
-document.getElementById("smsBox");
+const complaintList =
+document.getElementById("complaints");
 
-const historyBox =
-document.getElementById("history");
-
-const scoreBoard =
-document.getElementById("scoreBoard");
+const wave =
+document.getElementById("wave");
 
 /* ===== VARIABLES ===== */
 
-let currentAudio = null;
-
-let currentStep = "language";
+let currentStep = "idle";
 
 let selectedLanguage = "";
 
 let selectedCrop = "";
 
+let selectedSymptom = "";
+
 let seconds = 0;
 
 let timerInterval;
-
-/* ===== RECORDING ===== */
 
 let mediaRecorder;
 
 let audioChunks = [];
 
-let complaintAudioURL = "";
-
-/* ===== SCORES ===== */
-
-let scores = {
-
-Urea:9,
-Mancozeb:8,
-"Neem Oil":7,
-Spinosad:6
-
-};
+let currentAudio = null;
 
 /* ===== SPEECH ===== */
 
-const SpeechRecognition =
+window.SpeechRecognition =
 window.SpeechRecognition ||
 window.webkitSpeechRecognition;
 
 const recognition =
-new SpeechRecognition();
+new webkitSpeechRecognition();
+
+recognition.lang = "en-IN";
 
 recognition.continuous = false;
 
@@ -64,7 +52,7 @@ recognition.interimResults = false;
 
 /* ===== AUDIO ===== */
 
-function playAudio(file,callback){
+function playAudio(file){
 
 if(currentAudio){
 
@@ -79,79 +67,29 @@ new Audio("audio/" + file);
 
 currentAudio.play();
 
-currentAudio.onended = ()=>{
-
-if(callback){
-
-callback();
-
 }
 
-};
-
-}
-
-/* ===== WAVES ===== */
+/* ===== WAVE ===== */
 
 function startWave(){
 
-waves.classList.add("active");
+wave.style.opacity = "1";
 
 }
 
 function stopWave(){
 
-waves.classList.remove("active");
+wave.style.opacity = "0";
 
 }
 
-/* ===== START CALL ===== */
+/* ===== TIMER ===== */
 
-function startCall(){
-
-navigator.mediaDevices.getUserMedia({audio:true})
-.then(stream=>{
-
-stream.getTracks().forEach(track=>track.stop());
-
-currentStep = "language";
-
-selectedLanguage = "";
-
-selectedCrop = "";
-
-solutionBox.innerText = "";
-
-screenText.innerText = "Calling...";
+function startTimer(){
 
 clearInterval(timerInterval);
 
 seconds = 0;
-
-document.getElementById("timer")
-.innerText = "00:00";
-
-startWave();
-
-/* AUDIO UNLOCK */
-
-const unlockAudio =
-new Audio("audio/ringtone.m4a");
-
-unlockAudio.play()
-.then(()=>{
-
-currentAudio = unlockAudio;
-
-/* STOP AFTER 3 SEC */
-
-setTimeout(()=>{
-
-unlockAudio.pause();
-
-unlockAudio.currentTime = 0;
-
-/* TIMER */
 
 timerInterval = setInterval(()=>{
 
@@ -165,277 +103,186 @@ let secs =
 String(seconds%60)
 .padStart(2,"0");
 
-document.getElementById("timer")
-.innerText =
+timerText.innerText =
 mins + ":" + secs;
 
 },1000);
 
+}
+
+function stopTimer(){
+
+clearInterval(timerInterval);
+
+}
+
+/* ===== START CALL ===== */
+
+function startCall(){
+
+currentStep = "language";
+
+selectedLanguage = "";
+
+selectedCrop = "";
+
+selectedSymptom = "";
+
+solutionBox.innerText = "";
+
+screenText.innerText = "Calling...";
+
+timerText.innerText = "00:00";
+
+startWave();
+
+/* RINGTONE */
+
+const ring =
+new Audio("audio/ringtone.m4a");
+
+ring.play();
+
+currentAudio = ring;
+
+/* AFTER 3 SEC */
+
+setTimeout(()=>{
+
+ring.pause();
+
+ring.currentTime = 0;
+
+startTimer();
+
 screenText.innerText =
 "1 - Telugu\n2 - English";
-
-/* PLAY WELCOME */
 
 playAudio("welcome.m4a");
 
 },3000);
 
-})
-.catch(err=>{
-
-console.log(err);
-
-alert(
-"Tap again to enable audio"
-);
-
-});
-
-})
-.catch(err=>{
-
-console.log(err);
-
-alert(
-"Please allow microphone"
-);
-
-});
-
 }
-/* ===== BUTTON PRESS ===== */
 
-function pressKey(num){
+/* ===== BUTTONS ===== */
 
-/* ===== LANGUAGE ===== */
+function pressKey(key){
+
+/* LANGUAGE */
 
 if(currentStep === "language"){
 
-if(num === 1){
+if(key === "1"){
 
 selectedLanguage = "telugu";
 
-recognition.lang = "te-IN";
+screenText.innerText =
+"Say Crop Name";
+
+playAudio("telugu_crop.m4a");
 
 currentStep = "crop";
 
-screenText.innerText =
-"🎤 Say Crop Name";
-
-playAudio(
-"telugu_crop.m4a",
-()=>{
+setTimeout(()=>{
 
 startListening();
 
-}
-);
-
-return;
+},2500);
 
 }
 
-if(num === 2){
+else if(key === "2"){
 
 selectedLanguage = "english";
 
-recognition.lang = "en-US";
+screenText.innerText =
+"Say Crop Name";
+
+playAudio("english_crop.m4a");
 
 currentStep = "crop";
 
-screenText.innerText =
-"🎤 Say Crop Name";
-
-playAudio(
-"english_crop.m4a",
-()=>{
+setTimeout(()=>{
 
 startListening();
 
-}
-);
-
-return;
+},2500);
 
 }
 
 }
 
-/* ===== SYMPTOM BUTTONS ===== */
+/* SYMPTOMS */
 
-if(currentStep === "symptom"){
+else if(currentStep === "symptoms"){
 
-if(num === 1){
+if(key === "1"){
 
-giveSolution(
-"Urea",
+selectedSymptom = "Yellow";
 
-selectedLanguage==="telugu"
-? "urea.m4a"
-: "urea_en.m4a"
-);
+showFertilizer("Urea");
 
 }
 
-if(num === 2){
+else if(key === "2"){
 
-giveSolution(
-"Mancozeb",
+selectedSymptom = "Spots";
 
-selectedLanguage==="telugu"
-? "mancozeb.m4a"
-: "mancozeb_en.m4a"
-);
+showFertilizer("Mancozeb");
 
 }
 
-if(num === 3){
+else if(key === "3"){
 
-giveSolution(
-"Neem Oil",
+selectedSymptom = "Curl";
 
-selectedLanguage==="telugu"
-? "neem.m4a"
-: "neem_en.m4a"
-);
+showFertilizer("Neem Oil");
 
 }
 
-if(num === 4){
+else if(key === "4"){
 
-giveSolution(
-"Spinosad",
+selectedSymptom = "Pest";
 
-selectedLanguage==="telugu"
-? "spinosad.m4a"
-: "spinosad_en.m4a"
-);
-
-}
-
-/* ===== START COMPLAINT ===== */
-
-if(num === 9){
-
-currentStep = "complaint";
-
-screenText.innerText =
-
-"🎤 Recording Complaint...\n\nPress 5 To Submit";
-
-startWave();
-
-playAudio(
-
-selectedLanguage==="telugu"
-? "recording_instruction.m4a"
-: "recording_instruction_en.m4a"
-
-);
-
-/* ===== REAL RECORDING ===== */
-
-navigator.mediaDevices
-.getUserMedia({audio:true})
-.then(stream=>{
-
-mediaRecorder =
-new MediaRecorder(stream);
-
-audioChunks = [];
-
-mediaRecorder.start();
-
-mediaRecorder.ondataavailable =
-event=>{
-
-audioChunks.push(event.data);
-
-};
-
-mediaRecorder.onstop = ()=>{
-
-const audioBlob =
-new Blob(audioChunks,
-{type:"audio/webm"});
-
-complaintAudioURL =
-URL.createObjectURL(audioBlob);
-
-addComplaint(
-complaintAudioURL
-);
-
-};
-
-});
-
-return;
-
-}
-
-/* ===== NO COMPLAINT ===== */
-
-if(num === 5){
-
-screenText.innerText =
-
-"✅ Thank You\nCall Ended";
-
-playAudio(
-
-selectedLanguage==="telugu"
-? "thankyou.m4a"
-: "thankyou_en.m4a"
-
-);
-
-clearInterval(timerInterval);
-
-stopWave();
-
-return;
+showFertilizer("Spinosad");
 
 }
 
 }
 
-/* ===== SUBMIT COMPLAINT ===== */
+/* COMPLAINT */
 
-if(
-currentStep === "complaint" &&
-num === 5
-){
+else if(currentStep === "complaint"){
 
-if(mediaRecorder){
+if(key === "9"){
 
-mediaRecorder.stop();
+startComplaintRecording();
 
 }
 
-screenText.innerText =
+else if(key === "5"){
 
-"✅ Complaint Submitted\nCall Ended";
-
-stopWave();
-
-playAudio(
-
-selectedLanguage==="telugu"
-? "thankyou.m4a"
-: "thankyou_en.m4a"
-
-);
-
-clearInterval(timerInterval);
-
-return;
+endCall();
 
 }
 
 }
 
-/* ===== START LISTEN ===== */
+/* RECORDING */
+
+else if(currentStep === "recording"){
+
+if(key === "5"){
+
+stopComplaintRecording();
+
+}
+
+}
+
+}
+
+/* ===== LISTEN ===== */
 
 function startListening(){
 
@@ -459,89 +306,68 @@ console.log(e);
 
 /* ===== VOICE RESULT ===== */
 
-recognition.onresult = (event)=>{
-
-stopWave();
+recognition.onresult =
+function(event){
 
 let text =
 event.results[0][0]
 .transcript
-.toLowerCase();
+.toLowerCase()
+.trim();
 
 console.log(text);
 
-/* ===== CROP DETECTION ===== */
-
-if(currentStep === "crop"){
+/* BETTER MATCHING */
 
 if(
-text.includes("paddy") ||
-text.includes("వరి")
+text.includes("paddy")
 ){
 
 selectedCrop = "Paddy";
 
-cropDetected(
-
-selectedLanguage==="telugu"
-? "paddy.m4a"
-: "paddy_en.m4a"
-
-);
+cropDetected();
 
 }
 
 else if(
-text.includes("cotton") ||
-text.includes("పత్తి")
+text.includes("cotton")
+||
+text.includes("cotten")
 ){
 
 selectedCrop = "Cotton";
 
-cropDetected(
-
-selectedLanguage==="telugu"
-? "cotton.m4a"
-: "cotton_en.m4a"
-
-);
+cropDetected();
 
 }
 
 else if(
-text.includes("chilli") ||
-text.includes("mirchi") ||
-text.includes("మిర్చి")
+text.includes("chilli")
+||
+text.includes("chili")
 ){
 
 selectedCrop = "Chilli";
 
-cropDetected(
-
-selectedLanguage==="telugu"
-? "chilli.m4a"
-: "chilli_en.m4a"
-
-);
+cropDetected();
 
 }
 
 else if(
-text.includes("maize") ||
-text.includes("మొక్కజొన్న")
+text.includes("maize")
+||
+text.includes("maze")
 ){
 
 selectedCrop = "Maize";
 
-cropDetected(
-
-selectedLanguage==="telugu"
-? "maize.m4a"
-: "maize_en.m4a"
-
-);
+cropDetected();
 
 }
+
+else{
+
+playAudio("retry.m4a");
 
 }
 
@@ -549,299 +375,157 @@ selectedLanguage==="telugu"
 
 /* ===== CROP DETECTED ===== */
 
-function cropDetected(audio){
+function cropDetected(){
 
-currentStep = "symptom";
+stopWave();
 
 screenText.innerText =
+selectedCrop +
+"\nDetected\n\n1 Yellow\n2 Spots\n3 Curl\n4 Pest";
 
-"Crop Recognized\n\n1 - Yellow Leaves\n2 - Brown Spots\n3 - Leaf Curl\n4 - Pest Attack\n5 - No Complaint\n9 - Complaint";
+if(selectedLanguage === "telugu"){
 
-playAudio(audio,()=>{
-
-playSymptoms();
-
-});
+playAudio("complaint.m4a");
 
 }
 
-/* ===== PLAY SYMPTOMS ===== */
+else{
 
-function playSymptoms(){
-
-let yellow =
-selectedLanguage==="telugu"
-? "yellow.m4a"
-: "yellow_en.m4a";
-
-let spots =
-selectedLanguage==="telugu"
-? "spots.m4a"
-: "spots_en.m4a";
-
-let curl =
-selectedLanguage==="telugu"
-? "curl.m4a"
-: "curl_en.m4a";
-
-let pest =
-selectedLanguage==="telugu"
-? "pest.m4a"
-: "pest_en.m4a";
-
-playAudio(yellow,()=>{
-
-playAudio(spots,()=>{
-
-playAudio(curl,()=>{
-
-playAudio(pest);
-
-});
-
-});
-
-});
+playAudio("complaint.m4a");
 
 }
 
-/* ===== SOLUTION ===== */
+currentStep = "symptoms";
 
-function giveSolution(name,audio){
+}
+
+/* ===== FERTILIZER ===== */
+
+function showFertilizer(name){
 
 solutionBox.innerText =
-
 "Fertilizer : " + name;
 
-addSMS(selectedCrop,name);
+if(name === "Urea"){
 
-playAudio(audio,()=>{
-
-playAudio(
-
-selectedLanguage==="telugu"
-? "press9.m4a"
-: "press9_en.m4a"
-
-);
-
-});
+playAudio("urea.m4a");
 
 }
 
-/* ===== SMS ===== */
+else if(name === "Mancozeb"){
 
-function addSMS(crop,solution){
-
-let sms =
-JSON.parse(
-localStorage.getItem("sms")
-) || [];
-
-sms.push({
-
-crop,
-solution,
-
-time:
-new Date().toLocaleString()
-
-});
-
-localStorage.setItem(
-
-"sms",
-
-JSON.stringify(sms)
-
-);
-
-loadSMS();
+playAudio("mancozeb.m4a");
 
 }
 
-function loadSMS(){
+else if(name === "Neem Oil"){
 
-let sms =
-JSON.parse(
-localStorage.getItem("sms")
-) || [];
-
-if(sms.length===0){
-
-smsBox.innerHTML =
-
-`
-<h2>📩 SMS History</h2>
-
-<div class="message">
-
-No SMS Sent
-
-</div>
-`;
-
-return;
+playAudio("neem.m4a");
 
 }
 
-smsBox.innerHTML =
+else if(name === "Spinosad"){
 
-`<h2>📩 SMS History</h2>` +
-
-sms.map(s=>`
-
-<div class="message">
-
-<b>${s.crop}</b>
-
-<br><br>
-
-${s.solution}
-
-<div class="time">
-
-${s.time}
-
-</div>
-
-</div>
-
-`).join("");
+playAudio("spinosad.m4a");
 
 }
 
-/* ===== COMPLAINT ===== */
+/* COMPLAINT OPTION */
 
-function addComplaint(audioURL){
+setTimeout(()=>{
 
-let complaints =
-JSON.parse(
-localStorage.getItem("complaints")
-) || [];
+screenText.innerText =
+"9 Record Complaint\n5 End Call";
 
-complaints.push({
+playAudio("press9.m4a");
 
-message:
-"Complaint Registered",
+currentStep = "complaint";
 
-audio:audioURL,
-
-time:
-new Date().toLocaleString()
-
-});
-
-localStorage.setItem(
-
-"complaints",
-
-JSON.stringify(complaints)
-
-);
-
-loadComplaints();
+},4000);
 
 }
 
-function loadComplaints(){
+/* ===== RECORDING ===== */
 
-let complaints =
-JSON.parse(
-localStorage.getItem("complaints")
-) || [];
+async function startComplaintRecording(){
 
-if(complaints.length===0){
+screenText.innerText =
+"Recording...\nPress 5 To Submit";
 
-historyBox.innerHTML =
+playAudio("recording_instruction.m4a");
 
-`
-<h2>🎤 Complaint History</h2>
+currentStep = "recording";
 
-<div class="message">
+const stream =
+await navigator.mediaDevices
+.getUserMedia({audio:true});
 
-No Complaint
+mediaRecorder =
+new MediaRecorder(stream);
 
-</div>
-`;
+audioChunks = [];
 
-return;
+mediaRecorder.ondataavailable =
+event=>{
 
-}
+audioChunks.push(event.data);
 
-historyBox.innerHTML =
+};
 
-`<h2>🎤 Complaint History</h2>` +
+mediaRecorder.onstop = ()=>{
 
-complaints.map(c=>`
+const blob =
+new Blob(audioChunks);
 
-<div class="message">
+const audioURL =
+URL.createObjectURL(blob);
 
-${c.message}
+const audio =
+document.createElement("audio");
 
-<br><br>
+audio.controls = true;
 
-<audio controls
-src="${c.audio}">
-</audio>
+audio.src = audioURL;
 
-<div class="time">
+const item =
+document.createElement("div");
 
-${c.time}
+item.innerHTML =
+"<p>Complaint Recorded</p>";
 
-</div>
+item.appendChild(audio);
 
-</div>
+complaintList.appendChild(item);
 
-`).join("");
+};
 
-}
-
-/* ===== SCORE BAR ===== */
-
-function scoreBar(name,value){
-
-let width = value * 10;
-
-return '<div class="score-item">' +
-
-'<div class="score-title">' +
-name +
-'</div>' +
-
-'<div class="score-bg">' +
-
-'<div class="score-fill" style="width:' +
-width +
-'%">' +
-
-value +
-'/10</div></div></div>';
+mediaRecorder.start();
 
 }
 
-/* ===== UPDATE SCORES ===== */
+/* ===== STOP RECORDING ===== */
 
-function updateScores(){
+function stopComplaintRecording(){
 
-scoreBoard.innerHTML =
+mediaRecorder.stop();
 
-'<h2>📊 Smart Learning Scores</h2>' +
+playAudio("submitted.m4a");
 
-scoreBar("Urea",scores.Urea) +
-
-scoreBar("Mancozeb",scores.Mancozeb) +
-
-scoreBar("Neem Oil",scores["Neem Oil"]) +
-
-scoreBar("Spinosad",scores.Spinosad);
+endCall();
 
 }
 
-/* ===== LOAD ===== */
+/* ===== END CALL ===== */
 
-loadSMS();
+function endCall(){
 
-loadComplaints();
+stopTimer();
 
-updateScores();
+stopWave();
+
+screenText.innerText =
+"Call Ended";
+
+currentStep = "idle";
+
+}
