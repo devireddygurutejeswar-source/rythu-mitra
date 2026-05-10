@@ -71,7 +71,11 @@ stopCurrentAudio();
 currentAudio =
 new Audio("audio/" + file);
 
-/* PLAY */
+/* REALISTIC */
+
+currentAudio.volume = 1.0;
+
+currentAudio.preload = "auto";
 
 currentAudio.play()
 
@@ -85,8 +89,6 @@ console.log(file + " playing");
 
 console.log("Audio Error:",e);
 
-/* IMPORTANT */
-
 if(callback){
 
 callback();
@@ -94,8 +96,6 @@ callback();
 }
 
 });
-
-/* NORMAL END */
 
 currentAudio.onended = ()=>{
 
@@ -107,13 +107,9 @@ callback();
 
 };
 
-/* FAIL SAFE */
-
 currentAudio.onerror = ()=>{
 
 console.log(file + " missing");
-
-/* IMPORTANT */
 
 if(callback){
 
@@ -263,8 +259,6 @@ startListening();
 
 else if(currentStep === "symptoms"){
 
-/* STOP ALL */
-
 symptomTimeouts.forEach(
 t=>clearTimeout(t)
 );
@@ -341,7 +335,7 @@ startComplaintRecording();
 
 }
 
-/* ANY OTHER KEY */
+/* END */
 
 else{
 
@@ -407,7 +401,7 @@ event.results[0][0]
 
 console.log(text);
 
-/* PADDY */
+/* ===== PADDY ===== */
 
 if(
 text.includes("paddy") ||
@@ -421,7 +415,7 @@ cropDetected();
 
 }
 
-/* COTTON */
+/* ===== COTTON ===== */
 
 else if(
 text.includes("cotton") ||
@@ -434,7 +428,7 @@ cropDetected();
 
 }
 
-/* CHILLI */
+/* ===== CHILLI ===== */
 
 else if(
 text.includes("chilli") ||
@@ -447,7 +441,7 @@ cropDetected();
 
 }
 
-/* MAIZE */
+/* ===== MAIZE ===== */
 
 else if(
 text.includes("maize") ||
@@ -460,7 +454,7 @@ cropDetected();
 
 }
 
-/* RETRY */
+/* ===== RETRY ===== */
 
 else{
 
@@ -494,7 +488,7 @@ selectedCrop +
 
 let cropAudio = "";
 
-/* CROP AUDIO */
+/* AUDIO */
 
 if(selectedCrop==="Paddy"){
 
@@ -551,7 +545,7 @@ screenText.innerText =
 selectedCrop +
 " Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
 
-/* CLEAR OLD */
+/* CLEAR */
 
 symptomTimeouts.forEach(
 t=>clearTimeout(t)
@@ -635,8 +629,6 @@ playAudio(pest);
 
 function showFertilizer(name,audio){
 
-/* STOP OLD */
-
 symptomTimeouts.forEach(
 t=>clearTimeout(t)
 );
@@ -645,29 +637,21 @@ symptomTimeouts = [];
 
 stopCurrentAudio();
 
-/* SCREEN */
+/* SHOW LONGER */
 
-solutionBox.innerText =
-"🌱 Fertilizer : " + name;
+screenText.innerText =
 
-/* PLAY FERTILIZER */
+"📩 SMS Sent To Mobile\n\n🌱 Fertilizer : " + name;
+
+solutionBox.innerText = "";
+
+/* PLAY */
 
 playAudio(audio,()=>{
 
-/* SMS */
+/* WAIT */
 
-screenText.innerText =
-"📩 SMS Sent To Mobile";
-
-playAudio(
-
-selectedLanguage==="english"
-? "sms_en.m4a"
-: "sms.m4a",
-
-()=>{
-
-/* COMPLAINT MENU */
+setTimeout(()=>{
 
 screenText.innerText =
 
@@ -677,7 +661,7 @@ screenText.innerText =
 
 currentStep = "complaint";
 
-/* MENU AUDIO */
+/* AUDIO */
 
 playAudio(
 
@@ -687,9 +671,7 @@ selectedLanguage==="english"
 
 );
 
-}
-
-);
+},2500);
 
 });
 
@@ -699,18 +681,24 @@ selectedLanguage==="english"
 
 async function startComplaintRecording(){
 
+currentStep = "recording";
+
+/* SCREEN */
+
 screenText.innerText =
 "🎤 Recording Complaint...\n\nPress 5 To Submit";
+
+/* AUDIO FIRST */
 
 playAudio(
 
 selectedLanguage==="english"
 ? "recording_instruction_en.m4a"
-: "recording_instruction.m4a"
+: "recording_instruction.m4a",
 
-);
+async ()=>{
 
-currentStep = "recording";
+/* START RECORD AFTER AUDIO */
 
 const stream =
 await navigator.mediaDevices
@@ -758,6 +746,10 @@ complaintList.appendChild(item);
 };
 
 mediaRecorder.start();
+
+}
+
+);
 
 }
 
