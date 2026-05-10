@@ -283,7 +283,9 @@ startComplaintRecording();
 
 }
 
-else if(key === "5"){
+/* ===== ANY OTHER KEY ===== */
+
+else{
 
 endCall();
 
@@ -537,7 +539,11 @@ function showFertilizer(name,audio){
 solutionBox.innerText =
 "🌱 Fertilizer : " + name;
 
+/* ===== FERTILIZER AUDIO ===== */
+
 playAudio(audio,()=>{
+
+/* ===== SMS ===== */
 
 screenText.innerText =
 "📩 SMS Sent To Mobile";
@@ -550,8 +556,11 @@ selectedLanguage==="english"
 
 ()=>{
 
+/* ===== COMPLAINT OPTIONS ===== */
+
 screenText.innerText =
-"9 Record Complaint\n5 End Call";
+
+"9 Record Complaint\n\nPress Any Other Key To End Call";
 
 playAudio(
 
