@@ -53,13 +53,29 @@ function playAudio(file, callback){
 
   }
 
-  currentAudio = new Audio("audio/" + file);
+  currentAudio = new Audio();
+
+  currentAudio.src = "audio/" + file;
 
   currentAudio.preload = "auto";
 
-  currentAudio.play().catch(err=>{
-    console.log(err);
-  });
+  currentAudio.load();
+
+  let played = false;
+
+  currentAudio.oncanplaythrough = ()=>{
+
+    if(!played){
+
+      played = true;
+
+      currentAudio.play().catch(err=>{
+        console.log(err);
+      });
+
+    }
+
+  };
 
   currentAudio.onended = ()=>{
 
@@ -515,6 +531,12 @@ function cropDetected(audio){
 
   stopWave();
 
+  try{
+
+    recognition.stop();
+
+  }catch(e){}
+
   currentStep = "symptom";
 
   screenText.innerHTML =
@@ -560,6 +582,8 @@ function cropDetected(audio){
   "<br><br>" +
 
   "4 - Pest Attack";
+
+  /* ONLY PLAY CROP AUDIO */
 
   playAudio(audio);
 
