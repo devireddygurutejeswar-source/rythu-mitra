@@ -248,13 +248,10 @@ screenText.innerHTML =
 
 "🎤 <b>Say Crop Name</b><br><br>" +
 
-"1️⃣ Paddy<br><br>" +
-
-"2️⃣ Cotton<br><br>" +
-
-"3️⃣ Chilli<br><br>" +
-
-"4️⃣ Maize";
+"🌶️ మిర్చి<br><br>" +
+"🌿 పత్తి<br><br>" +
+"🌾 వరి<br><br>" +
+"🌽 మొక్కజొన్న";
 
 playAudio(
 "english_crop.m4a",
@@ -390,26 +387,18 @@ selectedLanguage==="english"
 
 "🎤 <b>Listening...</b><br><br>" +
 
-"1️⃣ Cotton<br><br>" +
-
-"2️⃣ Chilli<br><br>" +
-
-"3️⃣ Paddy<br><br>" +
-
-"4️⃣ Maize"
-
+"🌶️ మిర్చి<br><br>" +
+"🌿 పత్తి<br><br>" +
+"🌾 వరి<br><br>" +
+"🌽 మొక్కజొన్న";
 :
 
 "🎤 <b>వింటున్నాను...</b><br><br>" +
 
-"1️⃣ పత్తి<br><br>" +
-
-"2️⃣ మిర్చి<br><br>" +
-
-"3️⃣ వరి<br><br>" +
-
-"4️⃣ మొక్కజొన్న";
-
+"🌶️ మిర్చి<br><br>" +
+"🌿 పత్తి<br><br>" +
+"🌾 వరి<br><br>" +
+"🌽 మొక్కజొన్న";
 /* RESET */
 
 try{
@@ -630,21 +619,21 @@ startListening();
 
 function cropDetected(){
 
+currentStep = "cropDetected";
+
+/* ===== SCREEN ===== */
+
 screenText.innerHTML =
 
 "🌾 <b>" + selectedCrop + " Detected</b><br><br>" +
 
-"1️⃣ Yellow Leaves<br><br>" +
+"🩺 Symptoms Loading...";
 
-"2️⃣ Brown Spots<br><br>" +
-
-"3️⃣ Leaf Curl<br><br>" +
-
-"4️⃣ Pest Attack";
+/* ===== CROP AUDIO ===== */
 
 let cropAudio = "";
 
-/* AUDIO */
+/* PADDY */
 
 if(
 selectedCrop==="Paddy" ||
@@ -658,6 +647,8 @@ selectedLanguage==="english"
 
 }
 
+/* COTTON */
+
 else if(
 selectedCrop==="Cotton" ||
 selectedCrop==="పత్తి"
@@ -669,6 +660,8 @@ selectedLanguage==="english"
 : "cotton.m4a";
 
 }
+
+/* CHILLI */
 
 else if(
 selectedCrop==="Chilli" ||
@@ -682,6 +675,8 @@ selectedLanguage==="english"
 
 }
 
+/* MAIZE */
+
 else if(
 selectedCrop==="Maize" ||
 selectedCrop==="మొక్కజొన్న"
@@ -694,14 +689,47 @@ selectedLanguage==="english"
 
 }
 
+/* ===== PLAY CROP AUDIO ===== */
+
 playAudio(cropAudio,()=>{
+
+/* AFTER AUDIO ENDS */
+
+screenText.innerHTML =
+
+selectedLanguage==="english"
+
+?
+
+"🌾 <b>" + selectedCrop + "</b><br><br>" +
+
+"1️⃣ Yellow Leaves<br><br>" +
+
+"2️⃣ Brown Spots<br><br>" +
+
+"3️⃣ Leaf Curl<br><br>" +
+
+"4️⃣ Pest Attack"
+
+:
+
+"🌾 <b>" + selectedCrop + "</b><br><br>" +
+
+"1️⃣ ఆకులు పసుపు<br><br>" +
+
+"2️⃣ గోధుమ మచ్చలు<br><br>" +
+
+"3️⃣ ఆకులు ముడుచుకోవడం<br><br>" +
+
+"4️⃣ పురుగు దాడి";
+
+/* NOW PLAY SYMPTOMS */
 
 playSymptoms();
 
 });
 
 }
-
 /* ===== PLAY SYMPTOMS ===== */
 
 function playSymptoms(){
