@@ -12,9 +12,6 @@ document.getElementById("timer");
 const complaintList =
 document.getElementById("complaints");
 
-const smsBox =
-document.getElementById("smsBox");
-
 const wave =
 document.getElementById("wave");
 
@@ -28,15 +25,13 @@ let selectedCrop = "";
 
 let currentAudio = null;
 
-let seconds = 0;
-
 let timerInterval;
+
+let seconds = 0;
 
 let mediaRecorder;
 
 let audioChunks = [];
-
-let symptomReady = false;
 
 /* ===== SPEECH ===== */
 
@@ -149,11 +144,9 @@ timerText.innerText =
 
 startWave();
 
-/* ===== RING ===== */
-
 playAudio("ringtone.m4a");
 
-/* ===== AFTER RING ===== */
+/* ===== AFTER 3 SEC ===== */
 
 setTimeout(()=>{
 
@@ -176,7 +169,7 @@ function pressKey(key){
 
 if(currentStep === "language"){
 
-if(key === "1"){
+if(key==="1"){
 
 selectedLanguage = "telugu";
 
@@ -196,7 +189,7 @@ startListening();
 
 }
 
-else if(key === "2"){
+else if(key==="2"){
 
 selectedLanguage = "english";
 
@@ -220,14 +213,21 @@ startListening();
 
 /* ===== SYMPTOMS ===== */
 
-else if(
-currentStep === "symptoms"
-&& symptomReady
-){
+else if(currentStep === "symptoms"){
 
-symptomReady = false;
+/* ===== STOP CURRENT AUDIO ===== */
 
-if(key === "1"){
+if(currentAudio){
+
+currentAudio.pause();
+
+currentAudio.currentTime = 0;
+
+}
+
+/* ===== BUTTON 1 ===== */
+
+if(key==="1"){
 
 showFertilizer(
 "Urea",
@@ -238,7 +238,9 @@ selectedLanguage==="english"
 
 }
 
-else if(key === "2"){
+/* ===== BUTTON 2 ===== */
+
+else if(key==="2"){
 
 showFertilizer(
 "Mancozeb",
@@ -249,7 +251,9 @@ selectedLanguage==="english"
 
 }
 
-else if(key === "3"){
+/* ===== BUTTON 3 ===== */
+
+else if(key==="3"){
 
 showFertilizer(
 "Neem Oil",
@@ -260,7 +264,9 @@ selectedLanguage==="english"
 
 }
 
-else if(key === "4"){
+/* ===== BUTTON 4 ===== */
+
+else if(key==="4"){
 
 showFertilizer(
 "Spinosad",
@@ -273,17 +279,19 @@ selectedLanguage==="english"
 
 }
 
-/* ===== COMPLAINT ===== */
+/* ===== COMPLAINT MENU ===== */
 
 else if(currentStep === "complaint"){
 
-if(key === "9"){
+/* ===== RECORD ===== */
+
+if(key==="9"){
 
 startComplaintRecording();
 
 }
 
-/* ===== ANY OTHER KEY ===== */
+/* ===== END CALL ===== */
 
 else{
 
@@ -297,7 +305,7 @@ endCall();
 
 else if(currentStep === "recording"){
 
-if(key === "5"){
+if(key==="5"){
 
 stopComplaintRecording();
 
@@ -307,7 +315,7 @@ stopComplaintRecording();
 
 }
 
-/* ===== START LISTENING ===== */
+/* ===== START LISTEN ===== */
 
 function startListening(){
 
@@ -319,8 +327,6 @@ screenText.innerText =
 setTimeout(()=>{
 
 try{
-
-recognition.lang = "en-IN";
 
 recognition.start();
 
@@ -438,9 +444,9 @@ screenText.innerText =
 selectedCrop +
 " Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
 
-let cropAudio = "";
-
 /* ===== CROP AUDIO ===== */
+
+let cropAudio = "";
 
 if(selectedCrop==="Paddy"){
 
@@ -478,11 +484,17 @@ selectedLanguage==="english"
 
 }
 
-playAudio(cropAudio,()=>{
+/* ===== PLAY CROP AUDIO ===== */
+
+playAudio(cropAudio);
+
+/* ===== PLAY SYMPTOMS ===== */
+
+setTimeout(()=>{
 
 playSymptoms();
 
-});
+},2500);
 
 currentStep = "symptoms";
 
@@ -512,29 +524,35 @@ selectedLanguage==="english"
 ? "pest_en.m4a"
 : "pest.m4a";
 
-playAudio(yellow,()=>{
+/* ===== AUDIO SEQUENCE ===== */
 
-playAudio(spots,()=>{
+playAudio(yellow);
 
-playAudio(curl,()=>{
+setTimeout(()=>{
 
-playAudio(pest,()=>{
+playAudio(spots);
 
-symptomReady = true;
+},4000);
 
-});
+setTimeout(()=>{
 
-});
+playAudio(curl);
 
-});
+},8000);
 
-});
+setTimeout(()=>{
+
+playAudio(pest);
+
+},12000);
 
 }
 
 /* ===== FERTILIZER ===== */
 
 function showFertilizer(name,audio){
+
+currentStep = "fertilizer";
 
 solutionBox.innerText =
 "🌱 Fertilizer : " + name;
@@ -556,11 +574,11 @@ selectedLanguage==="english"
 
 ()=>{
 
-/* ===== COMPLAINT OPTIONS ===== */
+/* ===== COMPLAINT ===== */
 
 screenText.innerText =
 
-"9 Record Complaint\n\nPress Any Other Key To End Call";
+"Press 9 To Record Complaint\n\nPress Any Other Key To End Call";
 
 playAudio(
 
@@ -580,12 +598,12 @@ currentStep = "complaint";
 
 }
 
-/* ===== RECORDING ===== */
+/* ===== RECORD COMPLAINT ===== */
 
 async function startComplaintRecording(){
 
 screenText.innerText =
-"🎤 Recording...\nPress 5 To Submit";
+"🎤 Recording Complaint...\n\nPress 5 To Submit";
 
 playAudio(
 
