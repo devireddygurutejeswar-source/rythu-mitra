@@ -52,7 +52,7 @@ recognition.interimResults = false;
 
 /* ===== AUDIO ===== */
 
-function playAudio(file,callback){
+function stopCurrentAudio(){
 
 if(currentAudio){
 
@@ -61,6 +61,12 @@ currentAudio.pause();
 currentAudio.currentTime = 0;
 
 }
+
+}
+
+function playAudio(file,callback){
+
+stopCurrentAudio();
 
 currentAudio =
 new Audio("audio/" + file);
@@ -148,8 +154,6 @@ startWave();
 
 playAudio("ringtone.m4a");
 
-/* ===== AFTER RING ===== */
-
 setTimeout(()=>{
 
 startTimer();
@@ -221,19 +225,15 @@ else if(currentStep === "symptoms"){
 
 /* STOP ALL SYMPTOM AUDIOS */
 
-symptomTimeouts.forEach(t=>clearTimeout(t));
+symptomTimeouts.forEach(
+t=>clearTimeout(t)
+);
 
 symptomTimeouts = [];
 
-if(currentAudio){
+stopCurrentAudio();
 
-currentAudio.pause();
-
-currentAudio.currentTime = 0;
-
-}
-
-/* BUTTON 1 */
+/* ===== BUTTON 1 ===== */
 
 if(key==="1"){
 
@@ -246,7 +246,7 @@ selectedLanguage==="english"
 
 }
 
-/* BUTTON 2 */
+/* ===== BUTTON 2 ===== */
 
 else if(key==="2"){
 
@@ -259,7 +259,7 @@ selectedLanguage==="english"
 
 }
 
-/* BUTTON 3 */
+/* ===== BUTTON 3 ===== */
 
 else if(key==="3"){
 
@@ -272,7 +272,7 @@ selectedLanguage==="english"
 
 }
 
-/* BUTTON 4 */
+/* ===== BUTTON 4 ===== */
 
 else if(key==="4"){
 
@@ -296,7 +296,6 @@ if(key==="9"){
 startComplaintRecording();
 
 }
-
 else{
 
 endCall();
@@ -326,7 +325,8 @@ function startListening(){
 startWave();
 
 screenText.innerText =
-"🎤 Listening...\n\nSay Crop Name Clearly";
+
+"🎤 Listening...\n\n1 Paddy\n2 Cotton\n3 Chilli\n4 Maize";
 
 setTimeout(()=>{
 
@@ -509,7 +509,9 @@ selectedCrop +
 
 /* CLEAR OLD TIMEOUTS */
 
-symptomTimeouts.forEach(t=>clearTimeout(t));
+symptomTimeouts.forEach(
+t=>clearTimeout(t)
+);
 
 symptomTimeouts = [];
 
@@ -535,11 +537,11 @@ selectedLanguage==="english"
 ? "pest_en.m4a"
 : "pest.m4a";
 
-/* START FIRST */
+/* START */
 
 playAudio(yellow);
 
-/* SAVE TIMEOUTS */
+/* QUEUE */
 
 symptomTimeouts.push(
 
@@ -594,38 +596,67 @@ currentStep = "fertilizer";
 solutionBox.innerText =
 "🌱 Fertilizer : " + name;
 
-playAudio(audio,()=>{
+/* STOP OLD AUDIO */
+
+stopCurrentAudio();
+
+/* PLAY FERTILIZER */
+
+currentAudio =
+new Audio("audio/" + audio);
+
+currentAudio.play();
+
+/* AFTER FERTILIZER */
+
+currentAudio.onended = ()=>{
 
 screenText.innerText =
 "📩 SMS Sent To Mobile";
 
-playAudio(
+/* SMS AUDIO */
 
+let smsAudio =
+new Audio(
+"audio/" +
+(
 selectedLanguage==="english"
 ? "sms_en.m4a"
-: "sms.m4a",
+: "sms.m4a"
+)
+);
 
-()=>{
+smsAudio.play();
+
+/* AFTER SMS */
+
+smsAudio.onended = ()=>{
 
 screenText.innerText =
 
 "Press 9 To Record Complaint\n\nPress Any Other Key To End Call";
 
-playAudio(
+/* PRESS9 AUDIO */
 
+let pressAudio =
+new Audio(
+"audio/" +
+(
 selectedLanguage==="english"
 ? "press9_en.m4a"
 : "press9.m4a"
-
+)
 );
+
+pressAudio.play();
+
+/* IMPORTANT */
 
 currentStep = "complaint";
 
-}
+};
 
-);
-
-});
+};
 
 }
 
