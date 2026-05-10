@@ -53,41 +53,21 @@ function playAudio(file, callback){
 
   }
 
-  currentAudio = new Audio();
-
-  currentAudio.src = "audio/" + file;
+  currentAudio = new Audio("audio/" + file);
 
   currentAudio.preload = "auto";
 
-  currentAudio.load();
-
-  let played = false;
-
-  currentAudio.oncanplaythrough = ()=>{
-
-    if(!played){
-
-      played = true;
-
-      currentAudio.play().catch(err=>{
-        console.log(err);
-      });
-
-    }
-
-  };
+  currentAudio.play().catch(err=>{
+    console.log(err);
+  });
 
   currentAudio.onended = ()=>{
 
-    setTimeout(()=>{
+    if(callback){
 
-      if(callback){
+      callback();
 
-        callback();
-
-      }
-
-    },100);
+    }
 
   };
 
@@ -335,57 +315,51 @@ function startListening(){
 
     }
 
-  },200);
+  },500);
+
+  /* WAIT 5 SEC */
 
   voiceTimeout = setTimeout(()=>{
 
     if(currentStep==="crop"){
 
-      retryCrop();
+      try{
+
+        recognition.stop();
+
+      }catch(e){}
+
+      screenText.innerHTML =
+
+      selectedLanguage==="telugu"
+
+      ?
+
+      "❌ పంట గుర్తించలేదు<br><br>" +
+      "🎤 మళ్లీ చెప్పండి"
+
+      :
+
+      "❌ Crop Not Recognized<br><br>" +
+      "🎤 Please Speak Again";
+
+      playAudio(
+
+      selectedLanguage==="telugu"
+      ? "retry.m4a"
+      : "retry_english.m4a",
+
+      ()=>{
+
+        startListening();
+
+      }
+
+      );
 
     }
 
-  },
-
-  selectedLanguage==="telugu"
-  ? 10000
-  : 6000
-
-  );
-
-}
-
-/* ===== RETRY ===== */
-
-function retryCrop(){
-
-  clearTimeout(voiceTimeout);
-
-  screenText.innerHTML =
-
-  selectedLanguage==="telugu"
-
-  ?
-
-  "❌ పంట గుర్తించలేదు<br><br>" +
-  "🎤 మళ్లీ చెప్పండి"
-
-  :
-
-  "❌ Crop Not Recognized<br><br>" +
-  "🎤 Say Again";
-
-  playAudio(
-
-  selectedLanguage==="telugu"
-  ? "retry.m4a"
-  : "retry_english.m4a",
-
-  ()=>{
-
-    startListening();
-
-  });
+  },5000);
 
 }
 
@@ -491,9 +465,39 @@ recognition.onresult = (event)=>{
 
   }
 
+  /* ===== NOT RECOGNIZED ===== */
+
   else{
 
-    retryCrop();
+    currentStep = "crop";
+
+    screenText.innerHTML =
+
+    selectedLanguage==="telugu"
+
+    ?
+
+    "❌ పంట గుర్తించలేదు<br><br>" +
+    "🎤 మళ్లీ చెప్పండి"
+
+    :
+
+    "❌ Crop Not Recognized<br><br>" +
+    "🎤 Please Speak Again";
+
+    playAudio(
+
+    selectedLanguage==="telugu"
+    ? "retry.m4a"
+    : "retry_english.m4a",
+
+    ()=>{
+
+      startListening();
+
+    }
+
+    );
 
   }
 
@@ -507,19 +511,7 @@ recognition.onerror = ()=>{};
 
 recognition.onend = ()=>{
 
-  if(currentStep==="crop"){
-
-    setTimeout(()=>{
-
-      try{
-
-        recognition.start();
-
-      }catch(e){}
-
-    },1000);
-
-  }
+  stopWave();
 
 };
 
@@ -583,9 +575,57 @@ function cropDetected(audio){
 
   "4 - Pest Attack";
 
-  /* ONLY PLAY CROP AUDIO */
+  /* PLAY CROP AUDIO */
 
-  playAudio(audio);
+  playAudio(audio,()=>{
+
+    /* YELLOW */
+
+    playAudio(
+
+    selectedLanguage==="telugu"
+    ? "yellow.m4a"
+    : "yellow_en.m4a",
+
+    ()=>{
+
+      /* SPOTS */
+
+      playAudio(
+
+      selectedLanguage==="telugu"
+      ? "spots.m4a"
+      : "spots_en.m4a",
+
+      ()=>{
+
+        /* CURL */
+
+        playAudio(
+
+        selectedLanguage==="telugu"
+        ? "curl.m4a"
+        : "curl_en.m4a",
+
+        ()=>{
+
+          /* PEST */
+
+          playAudio(
+
+          selectedLanguage==="telugu"
+          ? "pest.m4a"
+          : "pest_en.m4a"
+
+          );
+
+        });
+
+      });
+
+    });
+
+  });
 
 }
 
