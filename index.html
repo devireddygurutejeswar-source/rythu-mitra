@@ -10,8 +10,244 @@ content="width=device-width, initial-scale=1.0">
 
 <title>Rythu Mitra IVR</title>
 
-<link rel="stylesheet"
-href="style.css">
+<style>
+
+body{
+
+margin:0;
+padding:20px;
+background:#101820;
+font-family:Arial;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:20px;
+
+}
+
+/* ===== PHONE ===== */
+
+.phone{
+
+width:320px;
+background:#111;
+border-radius:35px;
+padding:15px;
+box-shadow:0 0 20px black;
+
+}
+
+/* ===== TOP ===== */
+
+.topBar{
+
+display:flex;
+justify-content:space-between;
+color:white;
+font-size:18px;
+margin-bottom:10px;
+
+}
+
+/* ===== SCREEN ===== */
+
+#screen{
+
+height:420px;
+background:linear-gradient(
+to bottom,
+#bffcff,
+#dfffff
+);
+
+border-radius:20px;
+padding:20px;
+overflow:auto;
+text-align:center;
+font-size:26px;
+font-weight:bold;
+color:#123;
+position:relative;
+
+}
+
+#screenText{
+
+margin-top:20px;
+
+}
+
+/* ===== WAVE ===== */
+
+#wave{
+
+width:80px;
+height:80px;
+border-radius:50%;
+background:#00cc66;
+opacity:0;
+margin:auto;
+margin-top:20px;
+animation:pulse 1s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{
+
+transform:scale(0.8);
+opacity:0.5;
+
+}
+
+50%{
+
+transform:scale(1.1);
+opacity:1;
+
+}
+
+100%{
+
+transform:scale(0.8);
+opacity:0.5;
+
+}
+
+}
+
+/* ===== KEYPAD ===== */
+
+.keypad{
+
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+margin-top:20px;
+
+}
+
+.keypad button{
+
+height:60px;
+font-size:24px;
+border:none;
+border-radius:15px;
+background:#222;
+color:white;
+
+}
+
+/* ===== CALL BUTTONS ===== */
+
+.callButtons{
+
+display:flex;
+justify-content:center;
+gap:30px;
+margin-top:20px;
+
+}
+
+.callBtn,
+.endBtn{
+
+width:70px;
+height:70px;
+border:none;
+border-radius:50%;
+font-size:30px;
+color:white;
+
+}
+
+.callBtn{
+
+background:#00aa33;
+
+}
+
+.endBtn{
+
+background:red;
+
+}
+
+/* ===== SIDE PANEL ===== */
+
+.sidePanel{
+
+width:340px;
+display:flex;
+flex-direction:column;
+gap:20px;
+
+}
+
+/* ===== CARD ===== */
+
+.card{
+
+background:white;
+padding:20px;
+border-radius:20px;
+
+}
+
+.card h2{
+
+margin-top:0;
+color:#14532d;
+
+}
+
+/* ===== MESSAGE ===== */
+
+.message{
+
+background:#eaffd0;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+font-size:18px;
+
+}
+
+/* ===== AUDIO ===== */
+
+audio{
+
+width:100%;
+
+}
+
+/* ===== MOBILE ===== */
+
+@media(max-width:700px){
+
+body{
+
+flex-direction:column;
+align-items:center;
+
+}
+
+.sidePanel{
+
+width:90%;
+
+}
+
+.phone{
+
+width:90%;
+
+}
+
+}
+
+</style>
 
 </head>
 
@@ -93,14 +329,13 @@ onclick="endCall()">
 
 </div>
 
-<!-- ===== RIGHT PANEL ===== -->
+<!-- ===== SIDE PANEL ===== -->
 
 <div class="sidePanel">
 
-<!-- ===== SMS HISTORY ===== -->
+<!-- ===== SMS ===== -->
 
-<div id="smsBox"
-class="card">
+<div class="card">
 
 <h2>
 📩 SMS History
