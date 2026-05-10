@@ -133,22 +133,25 @@ document.getElementById("timer")
 
 startWave();
 
-/* RINGTONE */
+/* AUDIO UNLOCK */
 
-currentAudio =
+const unlockAudio =
 new Audio("audio/ringtone.m4a");
 
-currentAudio.play();
+unlockAudio.play()
+.then(()=>{
+
+currentAudio = unlockAudio;
 
 /* STOP AFTER 3 SEC */
 
 setTimeout(()=>{
 
-currentAudio.pause();
+unlockAudio.pause();
 
-currentAudio.currentTime = 0;
+unlockAudio.currentTime = 0;
 
-/* START TIMER */
+/* TIMER */
 
 timerInterval = setInterval(()=>{
 
@@ -171,6 +174,8 @@ mins + ":" + secs;
 screenText.innerText =
 "1 - Telugu\n2 - English";
 
+/* PLAY WELCOME */
+
 playAudio("welcome.m4a");
 
 },3000);
@@ -178,11 +183,22 @@ playAudio("welcome.m4a");
 })
 .catch(err=>{
 
+console.log(err);
+
 alert(
-"Please allow microphone permission"
+"Tap again to enable audio"
 );
 
+});
+
+})
+.catch(err=>{
+
 console.log(err);
+
+alert(
+"Please allow microphone"
+);
 
 });
 
@@ -423,13 +439,30 @@ return;
 
 function startListening(){
 
+navigator.mediaDevices
+.getUserMedia({audio:true})
+.then(()=>{
+
 startWave();
+
+/* DELAY */
 
 setTimeout(()=>{
 
 recognition.start();
 
-},200);
+},1200);
+
+})
+.catch(err=>{
+
+console.log(err);
+
+alert(
+"Please allow microphone"
+);
+
+});
 
 }
 
