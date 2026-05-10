@@ -130,35 +130,41 @@ selectedSymptom = "";
 
 solutionBox.innerText = "";
 
-screenText.innerText = "Calling...";
+screenText.innerText =
+"Calling...";
 
-timerText.innerText = "00:00";
+timerText.innerText =
+"00:00";
 
 startWave();
 
-/* RINGTONE */
+/* ===== ENABLE AUDIO ===== */
 
-const ring =
+const unlockAudio =
 new Audio("audio/ringtone.m4a");
 
-ring.play();
+unlockAudio.play();
 
-currentAudio = ring;
+unlockAudio.pause();
 
-/* AFTER 3 SEC */
+unlockAudio.currentTime = 0;
+
+/* ===== RING ===== */
+
+playAudio("ringtone.m4a");
+
+/* ===== AFTER RING ===== */
 
 setTimeout(()=>{
-
-ring.pause();
-
-ring.currentTime = 0;
 
 startTimer();
 
 screenText.innerText =
-"1 - Telugu\n2 - English";
+"1 Telugu\n2 English";
 
 playAudio("welcome.m4a");
+
+currentStep = "language";
 
 },3000);
 
@@ -168,7 +174,7 @@ playAudio("welcome.m4a");
 
 function pressKey(key){
 
-/* LANGUAGE */
+/* ===== LANGUAGE ===== */
 
 if(currentStep === "language"){
 
@@ -177,7 +183,7 @@ if(key === "1"){
 selectedLanguage = "telugu";
 
 screenText.innerText =
-"Say Crop Name";
+"🎤 Say Crop Name";
 
 playAudio("telugu_crop.m4a");
 
@@ -187,7 +193,7 @@ setTimeout(()=>{
 
 startListening();
 
-},2500);
+},3000);
 
 }
 
@@ -196,7 +202,7 @@ else if(key === "2"){
 selectedLanguage = "english";
 
 screenText.innerText =
-"Say Crop Name";
+"🎤 Say Crop Name";
 
 playAudio("english_crop.m4a");
 
@@ -206,13 +212,13 @@ setTimeout(()=>{
 
 startListening();
 
-},2500);
+},3000);
 
 }
 
 }
 
-/* SYMPTOMS */
+/* ===== SYMPTOMS ===== */
 
 else if(currentStep === "symptoms"){
 
@@ -250,7 +256,7 @@ showFertilizer("Spinosad");
 
 }
 
-/* COMPLAINT */
+/* ===== COMPLAINT ===== */
 
 else if(currentStep === "complaint"){
 
@@ -268,7 +274,7 @@ endCall();
 
 }
 
-/* RECORDING */
+/* ===== RECORDING ===== */
 
 else if(currentStep === "recording"){
 
@@ -282,7 +288,7 @@ stopComplaintRecording();
 
 }
 
-/* ===== LISTEN ===== */
+/* ===== START LISTENING ===== */
 
 function startListening(){
 
@@ -304,6 +310,7 @@ recognition.interimResults = false;
 recognition.start();
 
 }
+
 catch(e){
 
 console.log(e);
@@ -313,6 +320,7 @@ console.log(e);
 },1500);
 
 }
+
 /* ===== VOICE RESULT ===== */
 
 recognition.onresult =
@@ -385,12 +393,11 @@ cropDetected();
 
 }
 
-/* ===== NOT RECOGNIZED ===== */
+/* ===== RETRY ===== */
 
 else{
 
 screenText.innerText =
-
 "❌ Crop Not Recognized\n\nSpeak Again";
 
 playAudio("retry.m4a");
@@ -402,7 +409,7 @@ screenText.innerText =
 
 startListening();
 
-},2500);
+},3000);
 
 }
 
@@ -414,14 +421,12 @@ function cropDetected(){
 
 stopWave();
 
-/* ===== SCREEN ===== */
-
 screenText.innerText =
 
 selectedCrop +
 " Detected\n\n1 Yellow Leaves\n2 Brown Spots\n3 Leaf Curl\n4 Pest Attack";
 
-/* ===== CROP DETECTED AUDIO ===== */
+/* ===== CROP AUDIO ===== */
 
 if(selectedCrop === "Paddy"){
 
@@ -447,17 +452,20 @@ playAudio("maize.m4a");
 
 }
 
-/* ===== AFTER CROP AUDIO ===== */
+/* ===== PLAY SYMPTOMS ===== */
 
 setTimeout(()=>{
 
 playSymptoms();
 
-},2500);
+},3000);
 
 currentStep = "symptoms";
 
 }
+
+/* ===== PLAY SYMPTOMS ===== */
+
 function playSymptoms(){
 
 playAudio("yellow.m4a");
@@ -487,7 +495,9 @@ playAudio("pest.m4a");
 function showFertilizer(name){
 
 solutionBox.innerText =
-"Fertilizer : " + name;
+"🌱 Fertilizer : " + name;
+
+/* ===== FERTILIZER AUDIO ===== */
 
 if(name === "Urea"){
 
@@ -513,14 +523,16 @@ playAudio("spinosad.m4a");
 
 }
 
-/* COMPLAINT OPTION */
+/* ===== SMS ===== */
 
 setTimeout(()=>{
 
-playAudio("sms.m4a");
-
 screenText.innerText =
 "📩 SMS Sent To Mobile";
+
+playAudio("sms.m4a");
+
+/* ===== COMPLAINT ===== */
 
 setTimeout(()=>{
 
@@ -531,16 +543,18 @@ playAudio("press9.m4a");
 
 currentStep = "complaint";
 
-},3000);
+},3500);
 
 },5000);
 
-/* ===== RECORDING ===== */
+}
+
+/* ===== RECORD COMPLAINT ===== */
 
 async function startComplaintRecording(){
 
 screenText.innerText =
-"Recording...\nPress 5 To Submit";
+"🎤 Recording...\nPress 5 To Submit";
 
 playAudio("recording_instruction.m4a");
 
@@ -601,7 +615,11 @@ mediaRecorder.stop();
 
 playAudio("submitted.m4a");
 
+setTimeout(()=>{
+
 endCall();
+
+},3000);
 
 }
 
@@ -614,7 +632,7 @@ stopTimer();
 stopWave();
 
 screenText.innerText =
-"Call Ended";
+"📞 Call Ended";
 
 currentStep = "idle";
 
