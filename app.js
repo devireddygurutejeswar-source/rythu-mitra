@@ -245,6 +245,8 @@ function pressKey(num){
       : "urea_en.m4a"
       );
 
+      return;
+
     }
 
     if(num===2){
@@ -255,6 +257,8 @@ function pressKey(num){
       ? "mancozeb.m4a"
       : "mancozeb_en.m4a"
       );
+
+      return;
 
     }
 
@@ -267,6 +271,8 @@ function pressKey(num){
       : "neem_en.m4a"
       );
 
+      return;
+
     }
 
     if(num===4){
@@ -277,6 +283,8 @@ function pressKey(num){
       ? "spinosad.m4a"
       : "spinosad_en.m4a"
       );
+
+      return;
 
     }
 
@@ -290,11 +298,26 @@ function pressKey(num){
 
       startComplaint();
 
-    }else{
-
-      endCall();
+      return;
 
     }
+
+    /* IGNORE OLD SYMPTOM KEYS */
+
+    if(
+    num===1 ||
+    num===2 ||
+    num===3 ||
+    num===4
+    ){
+
+      return;
+
+    }
+
+    endCall();
+
+    return;
 
   }
 
@@ -304,6 +327,8 @@ function pressKey(num){
 
     submitComplaint();
 
+    return;
+
   }
 
 }
@@ -312,83 +337,74 @@ function pressKey(num){
 
 function startListening(){
 
-clearTimeout(voiceTimeout);
+  clearTimeout(voiceTimeout);
 
-currentStep = "crop";
+  currentStep = "crop";
 
-startWave();
+  startWave();
 
-/* START MIC */
+  try{
 
-try{
+    recognition.start();
 
-recognition.start();
+  }catch(err){
 
-}catch(err){
+    console.log(err);
 
-console.log(err);
+  }
 
-}
+  voiceTimeout = setTimeout(()=>{
 
-/* WAIT FULL TIME EVEN IF SILENT */
+    if(currentStep==="crop"){
 
-voiceTimeout = setTimeout(()=>{
+      try{
 
-if(currentStep==="crop"){
+        recognition.stop();
 
-try{
+      }catch(e){}
 
-recognition.stop();
+      stopWave();
 
-}catch(e){}
+      screenText.innerHTML =
 
-stopWave();
+      selectedLanguage==="telugu"
 
-/* SHOW RETRY */
+      ?
 
-screenText.innerHTML =
+      "❌ పంట గుర్తించలేదు<br><br>" +
+      "🎤 మళ్లీ చెప్పండి"
 
-selectedLanguage==="telugu"
+      :
 
-?
+      "❌ Crop Not Recognized<br><br>" +
+      "🎤 Please Speak Again";
 
-"❌ పంట గుర్తించలేదు<br><br>" +
-"🎤 మళ్లీ చెప్పండి"
+      playAudio(
 
-:
+      selectedLanguage==="telugu"
+      ? "retry.m4a"
+      : "retry_english.m4a",
 
-"❌ Crop Not Recognized<br><br>" +
-"🎤 Please Speak Again";
+      ()=>{
 
-/* PLAY RETRY AUDIO */
+        startListening();
 
-playAudio(
+      }
 
-selectedLanguage==="telugu"
-? "retry.m4a"
-: "retry_english.m4a",
+      );
 
-()=>{
+    }
 
-startListening();
+  },
 
-}
+  selectedLanguage==="telugu"
+  ? 12000
+  : 8000
 
-);
-
-}
-
-},
-
-selectedLanguage==="telugu"
-
-? 12000
-
-: 8000
-
-);
+  );
 
 }
+
 /* ===== RESULT ===== */
 
 recognition.onresult = (event)=>{
@@ -535,15 +551,22 @@ recognition.onresult = (event)=>{
 
 };
 
-/* ===== ERROR ===== */
-
-recognition.onerror = ()=>{};
-
 /* ===== END ===== */
 
 recognition.onend = ()=>{
 
-  /* KEEP STABLE */
+  if(
+  currentStep==="crop" &&
+  selectedLanguage==="telugu"
+  ){
+
+    try{
+
+      recognition.start();
+
+    }catch(e){}
+
+  }
 
 };
 
@@ -606,8 +629,6 @@ function cropDetected(audio){
   "<br><br>" +
 
   "4 - Pest Attack";
-
-  /* PLAY CROP AUDIO */
 
   playAudio(audio,()=>{
 
@@ -831,75 +852,56 @@ function startComplaint(){
 
 function submitComplaint(){
 
-if(mediaRecorder){
+  if(mediaRecorder){
 
-mediaRecorder.stop();
+    mediaRecorder.stop();
 
-}
+  }
 
-/* SHOW SUBMIT MESSAGE FIRST */
+  screenText.innerHTML =
+  "✅ Complaint Submitted";
 
-screenText.innerHTML =
+  stopWave();
 
-"✅ Complaint Submitted";
+  playAudio(
 
-stopWave();
+  selectedLanguage==="telugu"
+  ? "submitted.m4a"
+  : "submitted_en.m4a",
 
-/* PLAY LANGUAGE AUDIO COMPLETELY */
+  ()=>{
 
-playAudio(
+    screenText.innerHTML =
 
-selectedLanguage==="telugu"
-? "submitted.m4a"
-: "submitted_en.m4a",
+    "✅ Complaint Submitted<br><br>" +
+    "📞 Call Ended";
 
-()=>{
+    clearInterval(timerInterval);
 
-/* AFTER AUDIO ENDS */
+  }
 
-screenText.innerHTML =
-
-"✅ Complaint Submitted<br><br>" +
-"📞 Call Ended";
-
-/* STOP TIMER AFTER AUDIO */
-
-clearInterval(timerInterval);
+  );
 
 }
 
-);
-
-}
-/* ===== END ===== */
+/* ===== END CALL ===== */
 
 function endCall(){
 
-/* STOP AUDIO */
+  if(currentAudio){
 
-if(currentAudio){
+    currentAudio.pause();
 
-currentAudio.pause();
+  }
 
-}
+  screenText.innerHTML =
+  "📞 Call Ended";
 
-/* SHOW CALL ENDED */
+  stopWave();
 
-screenText.innerHTML =
+  clearInterval(timerInterval);
 
-"📞 Call Ended";
-
-/* STOP WAVES */
-
-stopWave();
-
-/* STOP TIMER ONLY HERE */
-
-clearInterval(timerInterval);
-
-/* PREVENT MORE INPUT */
-
-currentStep = "ended";
+  currentStep = "ended";
 
 }
 
